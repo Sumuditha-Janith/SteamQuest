@@ -1,4 +1,3 @@
-// SteamQuest/app/(dashboard)/tasks/_layout.tsx - COMPLETE UPDATED FILE
 import { MaterialIcons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import React from 'react';
@@ -20,14 +19,16 @@ const TasksLayout = () => {
         name="home" 
         options={{ 
           title: 'Achievement Guides',
-          headerRight: () => (
-            <MaterialIcons 
-              name="search" 
-              size={24} 
-              color="#66c0f4" 
-              style={{ marginRight: 15 }}
-            />
-          ),
+
+          // headerRight: () => (
+          //   <MaterialIcons 
+          //     name="search" 
+          //     size={24} 
+          //     color="#66c0f4" 
+          //     style={{ marginRight: 15 }}
+          //   />
+          // ),
+          
         }} 
       />
       <Stack.Screen 
