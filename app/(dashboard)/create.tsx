@@ -22,16 +22,34 @@ const CreateScreen = () => {
   const router = useRouter();
   const { user } = useAuth();
   
-  const [gameTitle, setGameTitle] = useState('');
-  const [achievementName, setAchievementName] = useState('');
-  const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard' | 'Very Hard'>('Medium');
-  const [content, setContent] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [estimatedTime, setEstimatedTime] = useState('');
-  const [platforms, setPlatforms] = useState<string[]>(['PC']);
+  const initialFormState = {
+    gameTitle: '',
+    achievementName: '',
+    difficulty: 'Medium' as 'Easy' | 'Medium' | 'Hard' | 'Very Hard',
+    content: '',
+    imageUri: null as string | null,
+    estimatedTime: '',
+    platforms: ['PC' as string],
+  };
+  
+  const [formState, setFormState] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
 
+  const {
+    gameTitle,
+    achievementName,
+    difficulty,
+    content,
+    imageUri,
+    estimatedTime,
+    platforms,
+  } = formState;
+
   const difficulties: ('Easy' | 'Medium' | 'Hard' | 'Very Hard')[] = ['Easy', 'Medium', 'Hard', 'Very Hard'];
+
+  const resetForm = () => {
+    setFormState(initialFormState);
+  };
 
   const handleSelectImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -49,7 +67,7 @@ const CreateScreen = () => {
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      setFormState(prev => ({ ...prev, imageUri: result.assets[0].uri }));
     }
   };
 
@@ -68,7 +86,7 @@ const CreateScreen = () => {
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      setFormState(prev => ({ ...prev, imageUri: result.assets[0].uri }));
     }
   };
 
@@ -91,10 +109,9 @@ const CreateScreen = () => {
         content: content.trim(),
         difficulty,
         authorId: user.uid,
-        authorName: user.displayName || 'Anonymous',
+        authorName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
         estimatedTime: estimatedTime.trim() || undefined,
         platform: platforms,
-        
       };
 
       await guideService.addGuide(guideData, imageUri || undefined);
@@ -106,9 +123,16 @@ const CreateScreen = () => {
           {
             text: 'OK',
             onPress: () => {
-              router.back();
-            }
-          }
+              resetForm();
+            },
+          },
+          {
+            text: 'View Guides',
+            onPress: () => {
+              resetForm();
+              router.replace('/(dashboard)/tasks/home');
+            },
+          },
         ]
       );
     } catch (error) {
@@ -121,10 +145,20 @@ const CreateScreen = () => {
 
   const togglePlatform = (platform: string) => {
     if (platforms.includes(platform)) {
-      setPlatforms(platforms.filter(p => p !== platform));
+      setFormState(prev => ({ 
+        ...prev, 
+        platforms: prev.platforms.filter(p => p !== platform) 
+      }));
     } else {
-      setPlatforms([...platforms, platform]);
+      setFormState(prev => ({ 
+        ...prev, 
+        platforms: [...prev.platforms, platform] 
+      }));
     }
+  };
+
+  const updateFormField = (field: keyof typeof initialFormState, value: any) => {
+    setFormState(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -133,7 +167,11 @@ const CreateScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          className="flex-1 p-4" 
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <View className="mb-6">
             <Text className="text-2xl font-bold text-white mb-2">Create New Guide</Text>
             <Text className="text-steam-gray">
@@ -148,8 +186,9 @@ const CreateScreen = () => {
               placeholder="e.g., Cyberpunk 2077, Elden Ring"
               placeholderTextColor="#8b9cb3"
               value={gameTitle}
-              onChangeText={setGameTitle}
+              onChangeText={(value) => updateFormField('gameTitle', value)}
               className="bg-steam-light text-white p-4 rounded-xl"
+              returnKeyType="next"
             />
           </View>
 
@@ -160,8 +199,9 @@ const CreateScreen = () => {
               placeholder="e.g., The World, Don't Fear the Reaper"
               placeholderTextColor="#8b9cb3"
               value={achievementName}
-              onChangeText={setAchievementName}
+              onChangeText={(value) => updateFormField('achievementName', value)}
               className="bg-steam-light text-white p-4 rounded-xl"
+              returnKeyType="next"
             />
           </View>
 
@@ -172,7 +212,7 @@ const CreateScreen = () => {
               {difficulties.map((diff) => (
                 <TouchableOpacity
                   key={diff}
-                  onPress={() => setDifficulty(diff)}
+                  onPress={() => updateFormField('difficulty', diff)}
                   className={`px-4 py-2 rounded-full mr-2 mb-2 ${
                     difficulty === diff ? 'bg-steam-accent' : 'bg-steam-light'
                   }`}
@@ -212,8 +252,9 @@ const CreateScreen = () => {
               placeholder="e.g., 2-3 hours, 30 minutes"
               placeholderTextColor="#8b9cb3"
               value={estimatedTime}
-              onChangeText={setEstimatedTime}
+              onChangeText={(value) => updateFormField('estimatedTime', value)}
               className="bg-steam-light text-white p-4 rounded-xl"
+              returnKeyType="next"
             />
           </View>
 
@@ -232,7 +273,7 @@ const CreateScreen = () => {
                   resizeMode="cover"
                 />
                 <TouchableOpacity
-                  onPress={() => setImageUri(null)}
+                  onPress={() => updateFormField('imageUri', null)}
                   className="absolute top-2 right-2 bg-red-500 rounded-full p-2"
                 >
                   <MaterialIcons name="close" size={20} color="white" />
@@ -266,33 +307,67 @@ const CreateScreen = () => {
               placeholder="Provide step-by-step instructions for unlocking this achievement..."
               placeholderTextColor="#8b9cb3"
               value={content}
-              onChangeText={setContent}
+              onChangeText={(value) => updateFormField('content', value)}
               multiline
               numberOfLines={6}
               textAlignVertical="top"
               className="bg-steam-light text-white p-4 rounded-xl min-h-[150px]"
+              returnKeyType="done"
+              blurOnSubmit={true}
             />
           </View>
 
-          {/* Submit Button */}
-          <TouchableOpacity
-            onPress={handleSubmit}
-            disabled={loading}
-            className={`${
-              loading ? 'bg-steam-accent/50' : 'bg-steam-accent'
-            } p-4 rounded-xl items-center mb-8`}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white text-lg font-bold">Publish Guide</Text>
-            )}
-          </TouchableOpacity>
+          {/* Action Buttons */}
+          <View className="flex-row mb-8 gap-x-3">
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  'Clear Form',
+                  'Are you sure you want to clear all fields?',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Clear',
+                      style: 'destructive',
+                      onPress: resetForm,
+                    },
+                  ]
+                );
+              }}
+              className="flex-1 bg-steam-light p-4 rounded-xl items-center justify-center"
+            >
+              <Text className="text-steam-gray font-bold">Clear</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleSubmit}
+              disabled={loading}
+              className={`flex-[2] ${
+                loading ? 'bg-steam-accent/50' : 'bg-steam-accent'
+              } p-4 rounded-xl items-center justify-center`}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white text-lg font-bold">
+                  Publish Guide
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Form Status Indicator */}
+          {(gameTitle || achievementName || content || imageUri) && (
+            <View className="mb-4 p-3 bg-steam-light/50 rounded-xl">
+              <Text className="text-steam-gray text-sm text-center">
+                Form has unsaved changes
+              </Text>
+            </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
-
 
 export default CreateScreen;
