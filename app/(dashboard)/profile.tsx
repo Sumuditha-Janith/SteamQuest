@@ -108,7 +108,7 @@ const ProfileScreen = () => {
           <MaterialIcons name="person" size={50} color="white" />
         </View>
         <Text className="text-white text-2xl font-bold">
-          {user?.email?.split('@')[0] || 'Gamer'}
+          {user?.displayName || user?.displayName|| 'Gamer'}
         </Text>
         <Text className="text-steam-gray">{user?.email}</Text>
         <TouchableOpacity

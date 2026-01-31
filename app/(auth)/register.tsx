@@ -18,14 +18,19 @@ const Register = () => {
   const { register } = useAuth();
   
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !username || !password || !confirmPassword) {
+    if (!email || !displayName || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
@@ -39,14 +44,14 @@ const Register = () => {
       return;
     }
 
-    if (username.length < 3) {
-      Alert.alert('Error', 'Username must be at least 3 characters');
+    if (displayName.length < 3) {
+      Alert.alert('Error', 'Display Name must be at least 3 characters');
       return;
     }
 
     setLoading(true);
     try {
-      await register(email, password, username);
+      await register(email, password, displayName);
     } catch (error: any) {
       Alert.alert('Registration Failed', error.message || 'An error occurred during registration');
     } finally {
@@ -70,10 +75,10 @@ const Register = () => {
           </Text>
           
           <TextInput
-            placeholder="Username"
+            placeholder="Display Name"
             placeholderTextColor="#8b9cb3"
-            value={username}
-            onChangeText={setUsername}
+            value={displayName}
+            onChangeText={setDisplayName}
             autoCapitalize="none"
             className="border border-steam-accent/30 bg-steam-blue p-4 mb-4 rounded-xl text-white"
           />

@@ -18,7 +18,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, username: string) => Promise<void>;
+  register: (email: string, password: string, displayName: string) => Promise<void>; // Changed from username to displayName
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateDisplayName: (displayName: string) => Promise<void>;
@@ -60,19 +60,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (email: string, password: string, username: string) => {
+  const register = async (email: string, password: string, displayName: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
       await updateProfile(user, {
-        displayName: username
+        displayName: displayName
       });
       
       await setDoc(doc(db, 'users', user.uid), {
         email,
-        username,
-        displayName: username,
+        displayName: displayName,
         createdAt: new Date().toISOString(),
         uid: user.uid
       });
@@ -109,7 +108,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       await updateDoc(doc(db, 'users', auth.currentUser.uid), {
         displayName: displayName,
-        username: displayName,
         updatedAt: new Date().toISOString()
       });
       

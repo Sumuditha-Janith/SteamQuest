@@ -91,7 +91,7 @@ const CreateScreen = () => {
         content: content.trim(),
         difficulty,
         authorId: user.uid,
-        authorName: user.displayName || user.email?.split('@')[0] || 'Anonymous',
+        authorName: user.displayName || 'Anonymous',
         estimatedTime: estimatedTime.trim() || undefined,
         platform: platforms,
         
