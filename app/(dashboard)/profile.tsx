@@ -94,6 +94,13 @@ const ProfileScreen = () => {
     );
   };
 
+  const handleEditGuide = (guideId: string) => {
+    router.push({
+      pathname: '/(dashboard)/tasks/edit',
+      params: { id: guideId }
+    } as any);
+  };
+
   const renderHeader = () => (
     <View className="p-4 bg-steam-blue">
       <View className="items-center mb-6">
@@ -150,6 +157,7 @@ const ProfileScreen = () => {
         guide={item} 
         showActions 
         onDelete={() => handleDeleteGuide(item.id)} 
+        onEdit={() => handleEditGuide(item.id)}
       />
     </View>
   );

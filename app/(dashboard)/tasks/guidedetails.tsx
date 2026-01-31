@@ -151,6 +151,14 @@ const GuideDetailScreen = () => {
                 Posted on {new Date(guide.createdAt).toLocaleDateString()}
               </Text>
             </View>
+            {guide.updatedAt && (
+              <View className="flex-row items-center mt-1">
+                <MaterialIcons name="update" size={20} color="#8b9cb3" />
+                <Text className="text-steam-gray ml-2">
+                  Updated on {new Date(guide.updatedAt).toLocaleDateString()}
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Guide Content */}

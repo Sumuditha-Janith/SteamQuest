@@ -15,10 +15,10 @@ function AuthRouting() {
     const inAuthGroup = segments[0] === '(auth)';
     
     if (!user && !inAuthGroup) {
-      // Redirect to login if not authenticated
+
       router.replace('/(auth)/login');
     } else if (user && inAuthGroup) {
-      // Redirect to home if authenticated and trying to access auth pages
+
       router.replace('/(dashboard)/tasks/home');
     }
   }, [user, loading, segments]);

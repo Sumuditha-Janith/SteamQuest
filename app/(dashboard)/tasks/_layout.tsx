@@ -1,3 +1,4 @@
+// SteamQuest/app/(dashboard)/tasks/_layout.tsx - COMPLETE UPDATED FILE
 import { MaterialIcons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import React from 'react';
@@ -33,6 +34,13 @@ const TasksLayout = () => {
         name="guidedetails" 
         options={{ 
           title: 'Guide Details',
+          presentation: 'modal',
+        }} 
+      />
+      <Stack.Screen 
+        name="edit" 
+        options={{ 
+          title: 'Edit Guide',
           presentation: 'modal',
         }} 
       />

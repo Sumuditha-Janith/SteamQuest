@@ -14,9 +14,10 @@ interface GuideCardProps {
   guide: Guide;
   showActions?: boolean;
   onDelete?: () => void;
+  onEdit?: () => void;
 }
 
-const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDelete }) => {
+const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDelete, onEdit }) => {
   const router = useRouter();
   
   const getDifficultyColor = (difficulty: string) => {
@@ -94,15 +95,28 @@ const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDel
           </Text>
         </View>
         
-        {showActions && onDelete && (
+        {showActions && (onDelete || onEdit) && (
           <View className="mt-3 pt-3 border-t border-steam-blue">
-            <TouchableOpacity
-              onPress={onDelete}
-              className="bg-red-500/20 py-2 rounded-lg flex-row justify-center items-center"
-            >
-              <MaterialIcons name="delete" size={18} color="#EF4444" />
-              <Text className="text-red-400 ml-2 font-semibold">Delete Guide</Text>
-            </TouchableOpacity>
+            <View className="flex-row">
+              {onEdit && (
+                <TouchableOpacity
+                  onPress={onEdit}
+                  className="flex-1 bg-blue-500/20 py-2 rounded-lg mr-1 flex-row justify-center items-center"
+                >
+                  <MaterialIcons name="edit" size={18} color="#3B82F6" />
+                  <Text className="text-blue-400 ml-2 font-semibold">Edit</Text>
+                </TouchableOpacity>
+              )}
+              {onDelete && (
+                <TouchableOpacity
+                  onPress={onDelete}
+                  className="flex-1 bg-red-500/20 py-2 rounded-lg ml-1 flex-row justify-center items-center"
+                >
+                  <MaterialIcons name="delete" size={18} color="#EF4444" />
+                  <Text className="text-red-400 ml-2 font-semibold">Delete</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         )}
       </View>
