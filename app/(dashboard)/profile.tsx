@@ -111,7 +111,14 @@ const ProfileScreen = () => {
           {user?.email?.split('@')[0] || 'Gamer'}
         </Text>
         <Text className="text-steam-gray">{user?.email}</Text>
-      </View>
+        <TouchableOpacity
+        onPress={() => router.push('../settings')}
+        className="mt-4 bg-steam-accent/20 px-4 py-2 rounded-xl flex-row items-center"
+      >
+        <MaterialIcons name="settings" size={16} color="#66c0f4" />
+        <Text className="text-steam-accent ml-2 font-semibold">Account Settings</Text>
+      </TouchableOpacity>
+    </View>
 
       <View className="bg-steam-light rounded-xl p-4 mb-4">
         <View className="flex-row justify-between items-center mb-4">

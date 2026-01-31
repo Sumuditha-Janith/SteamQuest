@@ -30,7 +30,6 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      // Navigation is handled by AuthContext in _layout.tsx
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'Invalid email or password');
     } finally {
@@ -83,6 +82,17 @@ const Login = () => {
               <Text className="text-white text-lg text-center font-semibold">Login</Text>
             )}
           </Pressable>
+          
+          {/* Forgot Password Link */}
+          <TouchableOpacity
+            onPress={() => router.push('../reset-password')}
+            className="mt-4"
+            disabled={loading}
+          >
+            <Text className="text-steam-accent text-center font-semibold">
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
           
           <View className="flex-row justify-center mt-6">
             <Text className="text-steam-gray">Don't have an account? </Text>
