@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Alert,
   ActivityIndicator,
   Share,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -22,6 +24,7 @@ const GuideDetailScreen = () => {
   const { user } = useAuth();
   const [guide, setGuide] = useState<Guide | null>(null);
   const [loading, setLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (id) {
@@ -98,7 +101,10 @@ const GuideDetailScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
+      >
         {/* Header with back button */}
         <View className="p-4 flex-row justify-between items-center">
           <TouchableOpacity onPress={() => router.back()}>
@@ -110,105 +116,113 @@ const GuideDetailScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Content */}
-        <View className="p-4">
-          {/* Game and Achievement */}
-          <Text className="text-2xl font-bold text-white mb-2">
-            {guide.gameTitle}
-          </Text>
-          <Text className="text-steam-accent text-xl font-semibold mb-4">
-            {guide.achievementName}
-          </Text>
+        {/* Main ScrollView for the entire page */}
+        <ScrollView
+          ref={scrollViewRef}
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="p-4">
+            {/* Game and Achievement */}
+            <Text className="text-2xl font-bold text-white mb-2">
+              {guide.gameTitle}
+            </Text>
+            <Text className="text-steam-accent text-xl font-semibold mb-4">
+              {guide.achievementName}
+            </Text>
 
-          {/* Difficulty and Platform */}
-          <View className="flex-row flex-wrap items-center mb-6">
-            <View 
-              className="px-3 py-1 rounded-full mr-2 mb-2"
-              style={{ backgroundColor: getDifficultyColor(guide.difficulty) }}
-            >
-              <Text className="text-white font-bold">
-                {guide.difficulty}
-              </Text>
-            </View>
-            
-            {guide.platform?.map((platform) => (
-              <View key={platform} className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
-                <Text className="text-steam-gray">{platform}</Text>
-              </View>
-            ))}
-            
-            {guide.estimatedTime && (
-              <View className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
-                <MaterialIcons name="access-time" size={14} color="#66c0f4" />
-                <Text className="text-steam-accent ml-1">{guide.estimatedTime}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Author Info */}
-          <View className="bg-steam-light rounded-xl p-4 mb-6">
-            <View className="flex-row items-center mb-2">
-              <MaterialIcons name="person" size={20} color="#66c0f4" />
-              <Text className="text-steam-accent ml-2 font-bold">
-                {guide.authorName}
-              </Text>
-            </View>
-            <View className="flex-row items-center">
-              <MaterialIcons name="calendar-today" size={20} color="#8b9cb3" />
-              <Text className="text-steam-gray ml-2">
-                Posted on {new Date(guide.createdAt).toLocaleDateString()}
-              </Text>
-            </View>
-            {guide.updatedAt && (
-              <View className="flex-row items-center mt-1">
-                <MaterialIcons name="update" size={20} color="#8b9cb3" />
-                <Text className="text-steam-gray ml-2">
-                  Updated on {new Date(guide.updatedAt).toLocaleDateString()}
+            {/* Difficulty and Platform */}
+            <View className="flex-row flex-wrap items-center mb-6">
+              <View 
+                className="px-3 py-1 rounded-full mr-2 mb-2"
+                style={{ backgroundColor: getDifficultyColor(guide.difficulty) }}
+              >
+                <Text className="text-white font-bold">
+                  {guide.difficulty}
                 </Text>
               </View>
+              
+              {guide.platform?.map((platform) => (
+                <View key={platform} className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
+                  <Text className="text-steam-gray">{platform}</Text>
+                </View>
+              ))}
+              
+              {guide.estimatedTime && (
+                <View className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
+                  <MaterialIcons name="access-time" size={14} color="#66c0f4" />
+                  <Text className="text-steam-accent ml-1">{guide.estimatedTime}</Text>
+                </View>
+              )}
+            </View>
+
+            {/* Author Info */}
+            <View className="bg-steam-light rounded-xl p-4 mb-6">
+              <View className="flex-row items-center mb-2">
+                <MaterialIcons name="person" size={20} color="#66c0f4" />
+                <Text className="text-steam-accent ml-2 font-bold">
+                  {guide.authorName}
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <MaterialIcons name="calendar-today" size={20} color="#8b9cb3" />
+                <Text className="text-steam-gray ml-2">
+                  Posted on {new Date(guide.createdAt).toLocaleDateString()}
+                </Text>
+              </View>
+              {guide.updatedAt && (
+                <View className="flex-row items-center mt-1">
+                  <MaterialIcons name="update" size={20} color="#8b9cb3" />
+                  <Text className="text-steam-gray ml-2">
+                    Updated on {new Date(guide.updatedAt).toLocaleDateString()}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Voting Section */}
+            {guide && (
+              <VoteButtons 
+                guide={guide} 
+                onVoteUpdate={handleVoteUpdate}
+              />
             )}
-          </View>
 
-          {/* Voting Section */}
-          {guide && (
-            <VoteButtons 
-              guide={guide} 
-              onVoteUpdate={handleVoteUpdate}
-            />
-          )}
+            {/* Guide Content */}
+            <View className="mb-8">
+              <Text className="text-white text-lg font-bold mb-4">Guide Steps</Text>
+              <View className="bg-steam-light rounded-xl p-4">
+                <Text className="text-white leading-6">
+                  {guide.content}
+                </Text>
+              </View>
+            </View>
 
-          {/* Guide Content */}
-          <View className="mb-8">
-            <Text className="text-white text-lg font-bold mb-4">Guide Steps</Text>
-            <View className="bg-steam-light rounded-xl p-4">
-              <Text className="text-white leading-6">
-                {guide.content}
+            {/* Tips Section */}
+            <View className="mb-8">
+              <Text className="text-white text-lg font-bold mb-4 flex-row items-center">
+                <MaterialIcons name="lightbulb" size={20} color="#F59E0B" />
+                <Text className="ml-2">Pro Tips</Text>
               </Text>
+              <View className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                <Text className="text-yellow-300">
+                  • Make sure to save your game before attempting difficult sections{'\n'}
+                  • Some achievements may require specific character builds or items{'\n'}
+                  • Check for any time-sensitive requirements{'\n'}
+                  • Consider playing on easier difficulties if available
+                </Text>
+              </View>
+            </View>
+
+            {/* Comment Section */}
+            <View className="mb-8">
+              <CommentSection guideId={guide.id} />
             </View>
           </View>
-
-          {/* Tips Section */}
-          <View className="mb-8">
-            <Text className="text-white text-lg font-bold mb-4 flex-row items-center">
-              <MaterialIcons name="lightbulb" size={20} color="#F59E0B" />
-              <Text className="ml-2">Pro Tips</Text>
-            </Text>
-            <View className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
-              <Text className="text-yellow-300">
-                • Make sure to save your game before attempting difficult sections{'\n'}
-                • Some achievements may require specific character builds or items{'\n'}
-                • Check for any time-sensitive requirements{'\n'}
-                • Consider playing on easier difficulties if available
-              </Text>
-            </View>
-          </View>
-
-          {/* Community Notes - Now replaced with CommentSection */}
-          <View className="mb-8">
-            <CommentSection guideId={guide.id} />
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

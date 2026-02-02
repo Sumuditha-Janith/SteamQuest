@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
@@ -26,6 +26,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ guideId }) => {
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     fetchComments();
@@ -66,6 +67,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ guideId }) => {
       
       setNewComment('');
       fetchComments();
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to add comment');
     } finally {
@@ -135,12 +139,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({ guideId }) => {
     return date.toLocaleDateString();
   };
 
-  const renderCommentItem = ({ item }: { item: Comment }) => {
+  const renderCommentItem = (item: Comment) => {
     const isOwner = user?.uid === item.userId;
     const isEditing = editingCommentId === item.id;
 
     return (
-      <View className="bg-steam-light rounded-xl p-4 mb-3">
+      <View key={item.id} className="bg-steam-light rounded-xl p-4 mb-3">
         <View className="flex-row justify-between items-start mb-2">
           <View className="flex-1">
             <View className="flex-row items-center">
@@ -221,26 +225,34 @@ const CommentSection: React.FC<CommentSectionProps> = ({ guideId }) => {
 
   return (
     <View className="flex-1">
-      <Text className="text-white text-xl font-bold mb-4">Community Comments</Text>
+      <Text className="text-white text-xl font-bold mb-4">Community Comments ({comments.length})</Text>
       
       {commentsLoading ? (
-        <ActivityIndicator size="large" color="#66c0f4" />
+        <View className="flex-1 justify-center items-center py-8">
+          <ActivityIndicator size="large" color="#66c0f4" />
+        </View>
       ) : (
-        <FlatList
-          data={comments}
-          renderItem={renderCommentItem}
-          keyExtractor={(item) => item.id}
-          ListEmptyComponent={renderEmptyState}
+        <ScrollView 
+          ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           className="mb-4"
-        />
+          keyboardDismissMode="on-drag"
+        >
+          {comments.length === 0 ? (
+            renderEmptyState()
+          ) : (
+            <View>
+              {comments.map(comment => renderCommentItem(comment))}
+            </View>
+          )}
+        </ScrollView>
       )}
       
       {/* Comment Input */}
       {user ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="mt-4"
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         >
           <View className="bg-steam-light rounded-xl p-3">
             <TextInput
