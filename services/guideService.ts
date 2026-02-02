@@ -8,7 +8,10 @@ import {
   deleteDoc, 
   doc,
   updateDoc,
-  getDoc
+  getDoc,
+  increment,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
@@ -26,6 +29,9 @@ export interface Guide {
   updatedAt?: number;
   estimatedTime?: string;
   platform?: string[];
+  upvotes: string[];
+  downvotes: string[];
+  commentCount: number;
 }
 
 export interface Comment {
@@ -33,8 +39,10 @@ export interface Comment {
   guideId: string;
   userId: string;
   userName: string;
+  userAvatar?: string;
   content: string;
   createdAt: number;
+  updatedAt?: number;
 }
 
 export interface CreateGuideData {
@@ -56,8 +64,6 @@ export const guideService = {
       
       if (imageUri) {
         try {
-          console.log('Uploading image:', imageUri);
-          
           const timestamp = Date.now();
           const randomString = Math.random().toString(36).substring(2, 15);
           const fileName = `guides/${timestamp}_${randomString}.jpg`;
@@ -66,12 +72,9 @@ export const guideService = {
           const response = await fetch(imageUri);
           const blob = await response.blob();
           
-          console.log('Blob created, size:', blob.size);
-          
           await uploadBytes(storageRef, blob);
           
           imageUrl = await getDownloadURL(storageRef);
-          console.log('Image uploaded successfully, URL:', imageUrl);
         } catch (uploadError) {
           console.error('Image upload failed:', uploadError);
           imageUrl = null;
@@ -86,6 +89,9 @@ export const guideService = {
         authorId: guideData.authorId,
         authorName: guideData.authorName,
         createdAt: Date.now(),
+        upvotes: [],
+        downvotes: [],
+        commentCount: 0,
       };
       
       if (guideData.estimatedTime && guideData.estimatedTime.trim() !== '') {
@@ -99,8 +105,6 @@ export const guideService = {
       if (imageUrl && imageUrl.trim() !== '') {
         guideToSave.imageUrl = imageUrl;
       }
-      
-      console.log('Guide to save (cleaned):', guideToSave);
       
       const docRef = await addDoc(collection(db, 'guides'), guideToSave);
       console.log('Guide added with ID:', docRef.id);
@@ -184,10 +188,24 @@ export const guideService = {
       const guides: Guide[] = [];
       
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         guides.push({
           id: doc.id,
-          ...doc.data(),
-        } as Guide);
+          gameTitle: data.gameTitle || '',
+          achievementName: data.achievementName || '',
+          content: data.content || '',
+          difficulty: data.difficulty || 'Medium',
+          imageUrl: data.imageUrl,
+          authorId: data.authorId || '',
+          authorName: data.authorName || 'Anonymous',
+          createdAt: data.createdAt || Date.now(),
+          updatedAt: data.updatedAt,
+          estimatedTime: data.estimatedTime,
+          platform: data.platform || ['PC'],
+          upvotes: data.upvotes || [],
+          downvotes: data.downvotes || [],
+          commentCount: data.commentCount || 0,
+        });
       });
       
       return guides;
@@ -209,10 +227,24 @@ export const guideService = {
       const guides: Guide[] = [];
       
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         guides.push({
           id: doc.id,
-          ...doc.data(),
-        } as Guide);
+          gameTitle: data.gameTitle || '',
+          achievementName: data.achievementName || '',
+          content: data.content || '',
+          difficulty: data.difficulty || 'Medium',
+          imageUrl: data.imageUrl,
+          authorId: data.authorId || '',
+          authorName: data.authorName || 'Anonymous',
+          createdAt: data.createdAt || Date.now(),
+          updatedAt: data.updatedAt,
+          estimatedTime: data.estimatedTime,
+          platform: data.platform || ['PC'],
+          upvotes: data.upvotes || [],
+          downvotes: data.downvotes || [],
+          commentCount: data.commentCount || 0,
+        });
       });
       
       return guides;
@@ -229,6 +261,168 @@ export const guideService = {
       console.error('Error deleting guide:', error);
       throw error;
     }
+  },
+
+  async upvoteGuide(guideId: string, userId: string): Promise<void> {
+    try {
+      const guideRef = doc(db, 'guides', guideId);
+      const guideSnap = await getDoc(guideRef);
+      
+      if (!guideSnap.exists()) {
+        throw new Error('Guide not found');
+      }
+      
+      const guide = guideSnap.data();
+      
+      if (guide.upvotes?.includes(userId)) {
+        await updateDoc(guideRef, {
+          upvotes: arrayRemove(userId)
+        });
+      } else {
+        if (guide.downvotes?.includes(userId)) {
+          await updateDoc(guideRef, {
+            downvotes: arrayRemove(userId),
+            upvotes: arrayUnion(userId)
+          });
+        } else {
+          await updateDoc(guideRef, {
+            upvotes: arrayUnion(userId)
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error upvoting guide:', error);
+      throw error;
+    }
+  },
+
+  async downvoteGuide(guideId: string, userId: string): Promise<void> {
+    try {
+      const guideRef = doc(db, 'guides', guideId);
+      const guideSnap = await getDoc(guideRef);
+      
+      if (!guideSnap.exists()) {
+        throw new Error('Guide not found');
+      }
+      
+      const guide = guideSnap.data();
+      
+      if (guide.downvotes?.includes(userId)) {
+        await updateDoc(guideRef, {
+          downvotes: arrayRemove(userId)
+        });
+      } else {
+        if (guide.upvotes?.includes(userId)) {
+          await updateDoc(guideRef, {
+            upvotes: arrayRemove(userId),
+            downvotes: arrayUnion(userId)
+          });
+        } else {
+          await updateDoc(guideRef, {
+            downvotes: arrayUnion(userId)
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error downvoting guide:', error);
+      throw error;
+    }
+  },
+
+  async addComment(guideId: string, userId: string, userName: string, content: string): Promise<string> {
+    try {
+      if (!content.trim()) {
+        throw new Error('Comment cannot be empty');
+      }
+      
+      const commentRef = await addDoc(collection(db, 'comments'), {
+        guideId,
+        userId,
+        userName,
+        content: content.trim(),
+        createdAt: Date.now(),
+      });
+      
+      const guideRef = doc(db, 'guides', guideId);
+      await updateDoc(guideRef, {
+        commentCount: increment(1)
+      });
+      
+      return commentRef.id;
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      throw error;
+    }
+  },
+
+  async getCommentsByGuideId(guideId: string): Promise<Comment[]> {
+    try {
+      const q = query(
+        collection(db, 'comments'),
+        where('guideId', '==', guideId),
+        orderBy('createdAt', 'asc')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const comments: Comment[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        comments.push({
+          id: doc.id,
+          guideId: data.guideId,
+          userId: data.userId,
+          userName: data.userName,
+          content: data.content,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+        });
+      });
+      
+      return comments;
+    } catch (error) {
+      console.error('Error getting comments:', error);
+      throw error;
+    }
+  },
+
+  async deleteComment(commentId: string, guideId: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'comments', commentId));
+      
+      const guideRef = doc(db, 'guides', guideId);
+      await updateDoc(guideRef, {
+        commentCount: increment(-1)
+      });
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      throw error;
+    }
+  },
+
+  async updateComment(commentId: string, content: string): Promise<void> {
+    try {
+      if (!content.trim()) {
+        throw new Error('Comment cannot be empty');
+      }
+      
+      await updateDoc(doc(db, 'comments', commentId), {
+        content: content.trim(),
+        updatedAt: Date.now(),
+      });
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      throw error;
+    }
+  },
+
+  getUserVoteStatus(guide: Guide, userId: string): 'upvoted' | 'downvoted' | null {
+    if (guide.upvotes?.includes(userId)) {
+      return 'upvoted';
+    } else if (guide.downvotes?.includes(userId)) {
+      return 'downvoted';
+    }
+    return null;
   },
 
   async searchGuides(searchTerm: string): Promise<Guide[]> {

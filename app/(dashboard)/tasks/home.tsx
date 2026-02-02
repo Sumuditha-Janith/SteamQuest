@@ -66,6 +66,15 @@ const HomeScreen = () => {
     setSearchQuery(text);
   };
 
+  const handleVoteUpdate = (guideId: string, updatedGuide: Guide) => {
+    setGuides(prev => 
+      prev.map(guide => guide.id === guideId ? updatedGuide : guide)
+    );
+    setFilteredGuides(prev =>
+      prev.map(guide => guide.id === guideId ? updatedGuide : guide)
+    );
+  };
+
   const getDifficultyStats = useMemo(() => {
     const stats = {
       Easy: 0,
@@ -129,6 +138,22 @@ const HomeScreen = () => {
             <Text className="text-steam-gray text-xs">Hard</Text>
           </View>
         </View>
+        
+        {/* Additional Stats for Votes */}
+        <View className="flex-row justify-between mt-4 pt-4 border-t border-steam-blue">
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-green-400">
+              {guides.reduce((total, guide) => total + (guide.upvotes?.length || 0), 0)}
+            </Text>
+            <Text className="text-steam-gray text-xs">Total Upvotes</Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-blue-400">
+              {guides.reduce((total, guide) => total + (guide.commentCount || 0), 0)}
+            </Text>
+            <Text className="text-steam-gray text-xs">Total Comments</Text>
+          </View>
+        </View>
       </View>
 
       {/* Categories */}
@@ -169,7 +194,10 @@ const HomeScreen = () => {
 
   const renderGuideItem = ({ item }: { item: Guide }) => (
     <View className="px-4">
-      <GuideCard guide={item} />
+      <GuideCard 
+        guide={item} 
+        onVoteUpdate={(updatedGuide) => handleVoteUpdate(item.id, updatedGuide)}
+      />
     </View>
   );
 

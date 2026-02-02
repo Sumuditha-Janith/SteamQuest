@@ -12,10 +12,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { guideService, Guide } from '../../../services/guideService';
+import { useAuth } from '../../../context/AuthContext';
+import VoteButtons from '../../../components/VoteButtons';
+import CommentSection from '../../../components/CommentSection';
 
 const GuideDetailScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { user } = useAuth();
   const [guide, setGuide] = useState<Guide | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +53,10 @@ const GuideDetailScreen = () => {
     } catch (error) {
       console.error('Error sharing:', error);
     }
+  };
+
+  const handleVoteUpdate = (updatedGuide: Guide) => {
+    setGuide(updatedGuide);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -161,6 +169,14 @@ const GuideDetailScreen = () => {
             )}
           </View>
 
+          {/* Voting Section */}
+          {guide && (
+            <VoteButtons 
+              guide={guide} 
+              onVoteUpdate={handleVoteUpdate}
+            />
+          )}
+
           {/* Guide Content */}
           <View className="mb-8">
             <Text className="text-white text-lg font-bold mb-4">Guide Steps</Text>
@@ -187,17 +203,9 @@ const GuideDetailScreen = () => {
             </View>
           </View>
 
-          {/* Community Notes */}
+          {/* Community Notes - Now replaced with CommentSection */}
           <View className="mb-8">
-            <Text className="text-white text-lg font-bold mb-4">Community Notes</Text>
-            <View className="bg-steam-light rounded-xl p-4">
-              <Text className="text-steam-gray text-center">
-                No comments yet. Be the first to share your experience!
-              </Text>
-              <TouchableOpacity className="bg-steam-accent py-3 rounded-lg mt-4">
-                <Text className="text-white text-center font-bold">Add Comment</Text>
-              </TouchableOpacity>
-            </View>
+            <CommentSection guideId={guide.id} />
           </View>
         </View>
       </ScrollView>

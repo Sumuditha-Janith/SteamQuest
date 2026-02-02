@@ -101,6 +101,12 @@ const ProfileScreen = () => {
     } as any);
   };
 
+  const handleVoteUpdate = (guideId: string, updatedGuide: Guide) => {
+    setUserGuides(prev => 
+      prev.map(guide => guide.id === guideId ? updatedGuide : guide)
+    );
+  };
+
   const renderHeader = () => (
     <View className="p-4 bg-steam-blue">
       <View className="items-center mb-6">
@@ -108,17 +114,19 @@ const ProfileScreen = () => {
           <MaterialIcons name="person" size={50} color="white" />
         </View>
         <Text className="text-white text-2xl font-bold">
-          {user?.displayName || user?.displayName|| 'Gamer'}
+          {user?.displayName || user?.email?.split('@')[0] || 'Gamer'}
         </Text>
         <Text className="text-steam-gray">{user?.email}</Text>
+        
+        {/* SETTINGS BUTTON */}
         <TouchableOpacity
-        onPress={() => router.push('../settings')}
-        className="mt-4 bg-steam-accent/20 px-4 py-2 rounded-xl flex-row items-center"
-      >
-        <MaterialIcons name="settings" size={16} color="#66c0f4" />
-        <Text className="text-steam-accent ml-2 font-semibold">Account Settings</Text>
-      </TouchableOpacity>
-    </View>
+          onPress={() => router.push('/settings')}
+          className="mt-4 bg-steam-accent/20 px-4 py-2 rounded-xl flex-row items-center"
+        >
+          <MaterialIcons name="settings" size={16} color="#66c0f4" />
+          <Text className="text-steam-accent ml-2 font-semibold">Account Settings</Text>
+        </TouchableOpacity>
+      </View>
 
       <View className="bg-steam-light rounded-xl p-4 mb-4">
         <View className="flex-row justify-between items-center mb-4">
@@ -128,22 +136,44 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
         
-        <View className="flex-row justify-between">
+        <View className="flex-row justify-between mb-4">
           <View className="items-center">
             <Text className="text-3xl font-bold text-steam-accent">{userGuides.length}</Text>
             <Text className="text-steam-gray">Guides Created</Text>
           </View>
           <View className="items-center">
             <Text className="text-3xl font-bold text-green-400">
-              {userGuides.filter(g => g.difficulty === 'Easy').length}
+              {userGuides.reduce((total, guide) => total + (guide.upvotes?.length || 0), 0)}
             </Text>
-            <Text className="text-steam-gray">Easy Guides</Text>
+            <Text className="text-steam-gray">Total Upvotes</Text>
           </View>
           <View className="items-center">
             <Text className="text-3xl font-bold text-yellow-400">
+              {userGuides.reduce((total, guide) => total + (guide.commentCount || 0), 0)}
+            </Text>
+            <Text className="text-steam-gray">Comments</Text>
+          </View>
+        </View>
+
+        {/* Additional Stats Row */}
+        <View className="flex-row justify-between pt-4 border-t border-steam-blue">
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-green-400">
+              {userGuides.filter(g => g.difficulty === 'Easy').length}
+            </Text>
+            <Text className="text-steam-gray text-xs">Easy Guides</Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-yellow-400">
               {userGuides.filter(g => g.difficulty === 'Medium').length}
             </Text>
-            <Text className="text-steam-gray">Medium Guides</Text>
+            <Text className="text-steam-gray text-xs">Medium Guides</Text>
+          </View>
+          <View className="items-center">
+            <Text className="text-2xl font-bold text-red-400">
+              {userGuides.filter(g => g.difficulty === 'Hard').length + userGuides.filter(g => g.difficulty === 'Very Hard').length}
+            </Text>
+            <Text className="text-steam-gray text-xs">Hard+ Guides</Text>
           </View>
         </View>
       </View>
@@ -165,6 +195,7 @@ const ProfileScreen = () => {
         showActions 
         onDelete={() => handleDeleteGuide(item.id)} 
         onEdit={() => handleEditGuide(item.id)}
+        onVoteUpdate={(updatedGuide) => handleVoteUpdate(item.id, updatedGuide)}
       />
     </View>
   );

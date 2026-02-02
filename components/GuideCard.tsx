@@ -9,15 +9,23 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Guide } from '../services/guideService';
+import VoteButtons from './VoteButtons';
 
 interface GuideCardProps {
   guide: Guide;
   showActions?: boolean;
   onDelete?: () => void;
   onEdit?: () => void;
+  onVoteUpdate?: (updatedGuide: Guide) => void;
 }
 
-const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDelete, onEdit }) => {
+const GuideCard: React.FC<GuideCardProps> = ({ 
+  guide, 
+  showActions = false, 
+  onDelete, 
+  onEdit,
+  onVoteUpdate 
+}) => {
   const router = useRouter();
   
   const getDifficultyColor = (difficulty: string) => {
@@ -36,6 +44,14 @@ const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDel
       params: { id: guide.id }
     } as any);
   };
+
+  const handleVoteUpdate = (updatedGuide: Guide) => {
+    if (onVoteUpdate) {
+      onVoteUpdate(updatedGuide);
+    }
+  };
+
+  const netVotes = (guide.upvotes?.length || 0) - (guide.downvotes?.length || 0);
 
   return (
     <TouchableOpacity 
@@ -82,6 +98,28 @@ const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDel
           {guide.content}
         </Text>
         
+        {/* Votes and Comments Stats */}
+        <View className="flex-row items-center mb-3">
+          <View className="flex-row items-center mr-4">
+            <MaterialIcons name="thumb-up" size={14} color="#10B981" />
+            <Text className="text-steam-gray ml-1 text-xs">{guide.upvotes?.length || 0}</Text>
+          </View>
+          
+          <View className="flex-row items-center mr-4">
+            <MaterialIcons name="thumb-down" size={14} color="#EF4444" />
+            <Text className="text-steam-gray ml-1 text-xs">{guide.downvotes?.length || 0}</Text>
+          </View>
+          
+          <View className="flex-row items-center">
+            <MaterialIcons name="comment" size={14} color="#66c0f4" />
+            <Text className="text-steam-gray ml-1 text-xs">{guide.commentCount || 0}</Text>
+          </View>
+          
+          <Text className="text-steam-gray text-xs ml-auto">
+            {new Date(guide.createdAt).toLocaleDateString()}
+          </Text>
+        </View>
+        
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center">
             <MaterialIcons name="person" size={16} color="#66c0f4" />
@@ -90,9 +128,12 @@ const GuideCard: React.FC<GuideCardProps> = ({ guide, showActions = false, onDel
             </Text>
           </View>
           
-          <Text className="text-steam-gray text-xs">
-            {new Date(guide.createdAt).toLocaleDateString()}
-          </Text>
+          {/* Compact Vote Buttons */}
+          <VoteButtons 
+            guide={guide} 
+            onVoteUpdate={handleVoteUpdate}
+            compact 
+          />
         </View>
         
         {showActions && (onDelete || onEdit) && (
