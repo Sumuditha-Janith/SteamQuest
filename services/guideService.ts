@@ -11,9 +11,10 @@ import {
   getDoc,
   increment,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  writeBatch
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
 
 export interface Guide {
@@ -145,7 +146,6 @@ export const guideService = {
       if (imageUrl) {
         updateData.imageUrl = imageUrl;
       }
-      
       Object.keys(updateData).forEach(key => {
         if (updateData[key] === undefined) {
           delete updateData[key];
@@ -256,7 +256,48 @@ export const guideService = {
 
   async deleteGuide(guideId: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, 'guides', guideId));
+      const guideRef = doc(db, 'guides', guideId);
+      const guideSnap = await getDoc(guideRef);
+      
+      if (!guideSnap.exists()) {
+        throw new Error('Guide not found');
+      }
+      
+      const guideData = guideSnap.data();
+      
+      const batch = writeBatch(db);
+      
+      const commentsQuery = query(
+        collection(db, 'comments'),
+        where('guideId', '==', guideId)
+      );
+      
+      const commentsSnapshot = await getDocs(commentsQuery);
+      
+      commentsSnapshot.forEach((commentDoc) => {
+        batch.delete(commentDoc.ref);
+      });
+      
+      batch.delete(guideRef);
+      
+      await batch.commit();
+      
+      if (guideData.imageUrl) {
+        try {
+          const url = guideData.imageUrl;
+          const pathStart = url.indexOf('/o/') + 3;
+          const pathEnd = url.indexOf('?');
+          const imagePath = decodeURIComponent(url.substring(pathStart, pathEnd));
+          
+          const imageRef = ref(storage, imagePath);
+          await deleteObject(imageRef);
+          console.log('Image deleted from storage:', imagePath);
+        } catch (storageError) {
+          console.error('Error deleting image from storage:', storageError);
+        }
+      }
+      
+      console.log(`Guide ${guideId} and its ${commentsSnapshot.size} comments deleted successfully`);
     } catch (error) {
       console.error('Error deleting guide:', error);
       throw error;
