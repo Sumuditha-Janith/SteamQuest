@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,7 +17,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import { guideService } from '../../services/guideService';
 import { useRouter } from 'expo-router';
-import { Image } from 'react-native';
 
 const CreateScreen = () => {
   const router = useRouter();
@@ -186,8 +186,10 @@ const CreateScreen = () => {
         platform: platforms,
       };
 
+      console.log('Creating guide with imageUri:', imageUri);
+  
       await guideService.addGuide(guideData, imageUri || undefined);
-      
+    
       Alert.alert(
         'Success!',
         'Your achievement guide has been published to the community.',
@@ -423,7 +425,15 @@ const CreateScreen = () => {
                   <MaterialIcons name="close" size={20} color="white" />
                 </TouchableOpacity>
               </View>
-            ) : null}
+            ) : (
+              <View className="mb-3">
+                <View className="w-full h-48 bg-steam-blue justify-center items-center rounded-xl border-2 border-dashed border-steam-accent/50">
+                  <MaterialIcons name="image" size={60} color="#2a475e" />
+                  <Text className="text-steam-accent mt-2">No screenshot selected</Text>
+                  <Text className="text-steam-gray text-xs mt-1">Will use default image</Text>
+                </View>
+              </View>
+            )}
             
             <View className="flex-row">
               <TouchableOpacity

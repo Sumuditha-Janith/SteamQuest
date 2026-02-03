@@ -14,8 +14,8 @@ import {
   arrayRemove,
   writeBatch
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from './firebaseConfig';
+import { db } from './firebaseConfig';
+import * as FileSystem from 'expo-file-system';
 
 export interface Guide {
   id: string;
@@ -58,37 +58,80 @@ export interface CreateGuideData {
   platform?: string[];
 }
 
+const IMGBB_API_KEY = '0aec13a2f49dfb974fe7b5ac4a86ae2b';
+const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg'
 export const guideService = {
+  async uploadImageToImgBB(imageUri: string): Promise<string> {
+    try {
+      console.log('Starting ImgBB upload for:', imageUri);
+      
+      const fileInfo = await FileSystem.getInfoAsync(imageUri);
+      if (!fileInfo.exists) {
+        throw new Error('File does not exist: ' + imageUri);
+      }
+
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const formData = new FormData();
+      formData.append('key', IMGBB_API_KEY);
+      formData.append('image', base64);
+
+      console.log('Uploading to ImgBB...');
+      
+      const response = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.data && result.data.url) {
+        console.log('ImgBB upload successful:', result.data.url);
+        return result.data.url;
+      } else {
+        console.error('ImgBB upload failed:', result);
+        throw new Error(result.error?.message || 'ImgBB upload failed');
+      }
+    } catch (error: any) {
+      console.error('Error in ImgBB upload:', error.message || error);
+      throw error;
+    }
+  },
+
   async addGuide(guideData: CreateGuideData, imageUri?: string): Promise<string> {
     try {
-      let imageUrl: string | null = null;
+      console.log('Adding guide, imageUri:', imageUri);
       
-      if (imageUri) {
+      let imageUrl: string = DEFAULT_IMAGE_URL;
+      
+      if (imageUri && imageUri.trim() !== '' && imageUri !== DEFAULT_IMAGE_URL) {
         try {
-          const timestamp = Date.now();
-          const randomString = Math.random().toString(36).substring(2, 15);
-          const fileName = `guides/${timestamp}_${randomString}.jpg`;
-          const storageRef = ref(storage, fileName);
-          
-          const response = await fetch(imageUri);
-          const blob = await response.blob();
-          
-          await uploadBytes(storageRef, blob);
-          
-          imageUrl = await getDownloadURL(storageRef);
-        } catch (uploadError) {
-          console.error('Image upload failed:', uploadError);
-          imageUrl = null;
+          console.log('Attempting to upload image to ImgBB');
+          imageUrl = await this.uploadImageToImgBB(imageUri);
+          console.log('Image uploaded successfully:', imageUrl);
+        } catch (uploadError: any) {
+          console.error('Image upload to ImgBB failed:', uploadError.message || uploadError);
+          console.log('Using default image instead');
+          imageUrl = DEFAULT_IMAGE_URL;
         }
+      } else {
+        console.log('No image provided or default image, using default image URL');
+        imageUrl = DEFAULT_IMAGE_URL;
       }
       
-      const guideToSave: Record<string, any> = {
-        gameTitle: guideData.gameTitle,
-        achievementName: guideData.achievementName,
-        content: guideData.content,
+      const guideToSave: any = {
+        gameTitle: guideData.gameTitle.trim(),
+        achievementName: guideData.achievementName.trim(),
+        content: guideData.content.trim(),
         difficulty: guideData.difficulty,
         authorId: guideData.authorId,
         authorName: guideData.authorName,
+        imageUrl: imageUrl,
         createdAt: Date.now(),
         upvotes: [],
         downvotes: [],
@@ -96,19 +139,19 @@ export const guideService = {
       };
       
       if (guideData.estimatedTime && guideData.estimatedTime.trim() !== '') {
-        guideToSave.estimatedTime = guideData.estimatedTime;
+        guideToSave.estimatedTime = guideData.estimatedTime.trim();
       }
       
       if (guideData.platform && guideData.platform.length > 0) {
         guideToSave.platform = guideData.platform;
+      } else {
+        guideToSave.platform = ['PC'];
       }
       
-      if (imageUrl && imageUrl.trim() !== '') {
-        guideToSave.imageUrl = imageUrl;
-      }
+      console.log('Saving guide to Firestore:', guideToSave);
       
       const docRef = await addDoc(collection(db, 'guides'), guideToSave);
-      console.log('Guide added with ID:', docRef.id);
+      console.log('Guide added with ID:', docRef.id, 'Image URL:', imageUrl);
       
       return docRef.id;
     } catch (error) {
@@ -123,35 +166,47 @@ export const guideService = {
     imageUri?: string
   ): Promise<void> {
     try {
-      let imageUrl: string | undefined = guideData.imageUrl;
+      console.log('Updating guide:', guideId, 'imageUri:', imageUri);
       
-      if (imageUri) {
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2, 15);
-        const fileName = `guides/${timestamp}_${randomString}.jpg`;
-        const storageRef = ref(storage, fileName);
-        
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
-        
-        await uploadBytes(storageRef, blob);
-        imageUrl = await getDownloadURL(storageRef);
+      let imageUrl: string | undefined = undefined;
+      
+      const currentGuide = await this.getGuideById(guideId);
+      
+      if (imageUri && imageUri.trim() !== '' && imageUri !== DEFAULT_IMAGE_URL) {
+        try {
+          console.log('Uploading new image to ImgBB');
+          imageUrl = await this.uploadImageToImgBB(imageUri);
+          console.log('New image uploaded:', imageUrl);
+        } catch (uploadError: any) {
+          console.error('Image upload failed:', uploadError.message || uploadError);
+          if (currentGuide && currentGuide.imageUrl) {
+            imageUrl = currentGuide.imageUrl;
+          } else {
+            imageUrl = DEFAULT_IMAGE_URL;
+          }
+        }
+      } else if (imageUri === DEFAULT_IMAGE_URL || !imageUri) {
+        imageUrl = DEFAULT_IMAGE_URL;
+      } else {
+        imageUrl = currentGuide?.imageUrl || DEFAULT_IMAGE_URL;
       }
       
-      const updateData: Record<string, any> = {
+      const updateData: any = {
         ...guideData,
         updatedAt: Date.now(),
       };
       
-      if (imageUrl) {
+      if (imageUrl !== undefined) {
         updateData.imageUrl = imageUrl;
       }
+      
       Object.keys(updateData).forEach(key => {
         if (updateData[key] === undefined) {
           delete updateData[key];
         }
       });
       
+      console.log('Updating guide with:', updateData);
       await updateDoc(doc(db, 'guides', guideId), updateData);
     } catch (error) {
       console.error('Error updating guide:', error);
@@ -165,10 +220,27 @@ export const guideService = {
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        return {
+        const data = docSnap.data();
+        const guide = {
           id: docSnap.id,
-          ...docSnap.data()
+          gameTitle: data.gameTitle || '',
+          achievementName: data.achievementName || '',
+          content: data.content || '',
+          difficulty: data.difficulty || 'Medium',
+          imageUrl: data.imageUrl || DEFAULT_IMAGE_URL,
+          authorId: data.authorId || '',
+          authorName: data.authorName || 'Anonymous',
+          createdAt: data.createdAt || Date.now(),
+          updatedAt: data.updatedAt,
+          estimatedTime: data.estimatedTime,
+          platform: data.platform || ['PC'],
+          upvotes: data.upvotes || [],
+          downvotes: data.downvotes || [],
+          commentCount: data.commentCount || 0,
         } as Guide;
+        
+        console.log('Retrieved guide:', guide.id, 'Image URL:', guide.imageUrl);
+        return guide;
       }
       return null;
     } catch (error) {
@@ -189,13 +261,13 @@ export const guideService = {
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        guides.push({
+        const guide = {
           id: doc.id,
           gameTitle: data.gameTitle || '',
           achievementName: data.achievementName || '',
           content: data.content || '',
           difficulty: data.difficulty || 'Medium',
-          imageUrl: data.imageUrl,
+          imageUrl: data.imageUrl || DEFAULT_IMAGE_URL,
           authorId: data.authorId || '',
           authorName: data.authorName || 'Anonymous',
           createdAt: data.createdAt || Date.now(),
@@ -205,9 +277,12 @@ export const guideService = {
           upvotes: data.upvotes || [],
           downvotes: data.downvotes || [],
           commentCount: data.commentCount || 0,
-        });
+        } as Guide;
+        
+        guides.push(guide);
       });
       
+      console.log(`Retrieved ${guides.length} guides`);
       return guides;
     } catch (error) {
       console.error('Error getting guides:', error);
@@ -228,13 +303,13 @@ export const guideService = {
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        guides.push({
+        const guide = {
           id: doc.id,
           gameTitle: data.gameTitle || '',
           achievementName: data.achievementName || '',
           content: data.content || '',
           difficulty: data.difficulty || 'Medium',
-          imageUrl: data.imageUrl,
+          imageUrl: data.imageUrl || DEFAULT_IMAGE_URL,
           authorId: data.authorId || '',
           authorName: data.authorName || 'Anonymous',
           createdAt: data.createdAt || Date.now(),
@@ -244,9 +319,12 @@ export const guideService = {
           upvotes: data.upvotes || [],
           downvotes: data.downvotes || [],
           commentCount: data.commentCount || 0,
-        });
+        } as Guide;
+        
+        guides.push(guide);
       });
       
+      console.log(`Retrieved ${guides.length} guides for user ${userId}`);
       return guides;
     } catch (error) {
       console.error('Error getting user guides:', error);
@@ -262,8 +340,6 @@ export const guideService = {
       if (!guideSnap.exists()) {
         throw new Error('Guide not found');
       }
-      
-      const guideData = guideSnap.data();
       
       const batch = writeBatch(db);
       
@@ -281,21 +357,6 @@ export const guideService = {
       batch.delete(guideRef);
       
       await batch.commit();
-      
-      if (guideData.imageUrl) {
-        try {
-          const url = guideData.imageUrl;
-          const pathStart = url.indexOf('/o/') + 3;
-          const pathEnd = url.indexOf('?');
-          const imagePath = decodeURIComponent(url.substring(pathStart, pathEnd));
-          
-          const imageRef = ref(storage, imagePath);
-          await deleteObject(imageRef);
-          console.log('Image deleted from storage:', imagePath);
-        } catch (storageError) {
-          console.error('Error deleting image from storage:', storageError);
-        }
-      }
       
       console.log(`Guide ${guideId} and its ${commentsSnapshot.size} comments deleted successfully`);
     } catch (error) {

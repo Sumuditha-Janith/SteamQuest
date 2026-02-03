@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,7 +17,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../../context/AuthContext';
 import { guideService, Guide } from '../../../services/guideService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Image } from 'react-native';
 
 const EditScreen = () => {
   const router = useRouter();
@@ -274,8 +274,8 @@ const EditScreen = () => {
             <Text className="text-steam-gray text-sm mb-3">
               Update the screenshot (optional)
             </Text>
-            
-            {imageUri ? (
+
+            {imageUri && imageUri !== 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg' ? (
               <View className="mb-3">
                 <Image 
                   source={{ uri: imageUri }}
@@ -283,16 +283,21 @@ const EditScreen = () => {
                   resizeMode="cover"
                 />
                 <TouchableOpacity
-                  onPress={() => setImageUri(null)}
+                  onPress={() => setImageUri('https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg')}
                   className="absolute top-2 right-2 bg-red-500 rounded-full p-2"
                 >
                   <MaterialIcons name="close" size={20} color="white" />
                 </TouchableOpacity>
               </View>
             ) : (
-              <Text className="text-steam-gray mb-3">No screenshot selected</Text>
+              <View className="mb-3">
+                <View className="w-full h-48 bg-steam-blue justify-center items-center rounded-xl border-2 border-dashed border-steam-accent/50">
+                  <MaterialIcons name="image" size={60} color="#2a475e" />
+                  <Text className="text-steam-accent mt-2">Using default image</Text>
+                </View>
+              </View>
             )}
-            
+
             <View className="flex-row">
               <TouchableOpacity
                 onPress={handleSelectImage}

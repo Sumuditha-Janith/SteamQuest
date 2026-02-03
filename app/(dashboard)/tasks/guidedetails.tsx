@@ -9,6 +9,7 @@ import {
   Share,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -17,6 +18,8 @@ import { guideService, Guide } from '../../../services/guideService';
 import { useAuth } from '../../../context/AuthContext';
 import VoteButtons from '../../../components/VoteButtons';
 import CommentSection from '../../../components/CommentSection';
+
+const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg';
 
 const GuideDetailScreen = () => {
   const router = useRouter();
@@ -157,6 +160,28 @@ const GuideDetailScreen = () => {
                 </View>
               )}
             </View>
+
+            {/* Screenshot Display */}
+            {guide.imageUrl && guide.imageUrl !== DEFAULT_IMAGE_URL ? (
+              <View className="mb-6">
+                <Text className="text-white font-bold mb-2">Screenshot</Text>
+                <Image 
+                  source={{ uri: guide.imageUrl }}
+                  className="w-full h-48 rounded-xl"
+                  resizeMode="cover"
+                />
+              </View>
+            ) : (
+              <View className="mb-6 bg-steam-light rounded-xl p-4">
+                <View className="flex-row items-center">
+                  <MaterialIcons name="image-not-supported" size={24} color="#66c0f4" />
+                  <Text className="text-steam-accent ml-2 font-bold">No Screenshot Available</Text>
+                </View>
+                <Text className="text-steam-gray text-sm mt-1">
+                  This guide doesn't include a screenshot. The guide content provides all necessary information.
+                </Text>
+              </View>
+            )}
 
             {/* Author Info */}
             <View className="bg-steam-light rounded-xl p-4 mb-6">

@@ -58,7 +58,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
       onPress={handlePress}
       className="bg-steam-light rounded-xl mb-4 overflow-hidden shadow-lg"
     >
-      {guide.imageUrl ? (
+      {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/Jw3yBsPq/og-EGSpic.jpg' ? (
         <Image 
           source={{ uri: guide.imageUrl }}
           style={styles.image}
