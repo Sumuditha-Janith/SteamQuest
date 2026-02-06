@@ -138,22 +138,6 @@ const HomeScreen = () => {
             <Text className="text-steam-gray text-xs">Hard</Text>
           </View>
         </View>
-        
-        {/* Additional Stats for Votes */}
-        <View className="flex-row justify-between mt-4 pt-4 border-t border-steam-blue">
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-green-400">
-              {guides.reduce((total, guide) => total + (guide.upvotes?.length || 0), 0)}
-            </Text>
-            <Text className="text-steam-gray text-xs">Total Upvotes</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-blue-400">
-              {guides.reduce((total, guide) => total + (guide.commentCount || 0), 0)}
-            </Text>
-            <Text className="text-steam-gray text-xs">Total Comments</Text>
-          </View>
-        </View>
       </View>
 
       {/* Categories */}
