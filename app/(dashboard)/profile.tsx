@@ -120,7 +120,7 @@ const ProfileScreen = () => {
         
         {/* SETTINGS BUTTON */}
         <TouchableOpacity
-          onPress={() => router.push('/settings')}
+          onPress={() => router.push('/(dashboard)/tasks/settings')}
           className="mt-4 bg-steam-accent/20 px-4 py-2 rounded-xl flex-row items-center"
         >
           <MaterialIcons name="settings" size={16} color="#66c0f4" />
@@ -145,38 +145,17 @@ const ProfileScreen = () => {
             <Text className="text-3xl font-bold text-green-400">
               {userGuides.reduce((total, guide) => total + (guide.upvotes?.length || 0), 0)}
             </Text>
-            <Text className="text-steam-gray">Total Upvotes</Text>
+            <Text className="text-steam-gray">Upvotes Recieved</Text>
           </View>
           <View className="items-center">
             <Text className="text-3xl font-bold text-yellow-400">
               {userGuides.reduce((total, guide) => total + (guide.commentCount || 0), 0)}
             </Text>
-            <Text className="text-steam-gray">Comments</Text>
-          </View>
-        </View>
-
-        {/* Additional Stats Row */}
-        <View className="flex-row justify-between pt-4 border-t border-steam-blue">
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-green-400">
-              {userGuides.filter(g => g.difficulty === 'Easy').length}
-            </Text>
-            <Text className="text-steam-gray text-xs">Easy Guides</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-yellow-400">
-              {userGuides.filter(g => g.difficulty === 'Medium').length}
-            </Text>
-            <Text className="text-steam-gray text-xs">Medium Guides</Text>
-          </View>
-          <View className="items-center">
-            <Text className="text-2xl font-bold text-red-400">
-              {userGuides.filter(g => g.difficulty === 'Hard').length + userGuides.filter(g => g.difficulty === 'Very Hard').length}
-            </Text>
-            <Text className="text-steam-gray text-xs">Hard+ Guides</Text>
+            <Text className="text-steam-gray">Comments Recieved</Text>
           </View>
         </View>
       </View>
+
 
       <TouchableOpacity
         onPress={handleLogout}

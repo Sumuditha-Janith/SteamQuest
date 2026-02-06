@@ -42,15 +42,6 @@ const DashboardLayout = () => {
           ),
         }}
       />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="settings" color={color} size={size} />
-          ),
-        }}
-      />
     </Tabs>
   );
 };

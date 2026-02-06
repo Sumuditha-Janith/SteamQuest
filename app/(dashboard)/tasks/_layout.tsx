@@ -20,15 +20,6 @@ const TasksLayout = () => {
         options={{ 
           title: 'Achievement Guides',
 
-          // headerRight: () => (
-          //   <MaterialIcons 
-          //     name="search" 
-          //     size={24} 
-          //     color="#66c0f4" 
-          //     style={{ marginRight: 15 }}
-          //   />
-          // ),
-          
         }} 
       />
       <Stack.Screen 
