@@ -70,82 +70,69 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ guide, onVoteUpdate, compact 
         <TouchableOpacity
           onPress={handleUpvote}
           disabled={!user}
-          className={`p-2 rounded-full ${currentVote === 'upvoted' ? 'bg-green-500/20' : 'bg-steam-light'}`}
+          className={`p-1 ${currentVote === 'upvoted' ? 'bg-green-500/20' : ''} rounded-full`}
         >
           <MaterialIcons 
             name="thumb-up" 
-            size={16} 
+            size={20} 
             color={currentVote === 'upvoted' ? '#10B981' : '#8b9cb3'} 
           />
         </TouchableOpacity>
         
-        <Text className="text-white mx-2 font-bold">{netVotes}</Text>
+        <Text className="text-white mx-1 text-sm font-bold min-w-[20px] text-center">
+          {netVotes}
+        </Text>
         
         <TouchableOpacity
           onPress={handleDownvote}
           disabled={!user}
-          className={`p-2 rounded-full ${currentVote === 'downvoted' ? 'bg-red-500/20' : 'bg-steam-light'}`}
+          className={`p-1 ${currentVote === 'downvoted' ? 'bg-red-500/20' : ''} rounded-full`}
         >
           <MaterialIcons 
             name="thumb-down" 
-            size={16} 
+            size={20} 
             color={currentVote === 'downvoted' ? '#EF4444' : '#8b9cb3'} 
           />
         </TouchableOpacity>
-        
-        <View className="flex-row items-center ml-4">
-          <MaterialIcons name="comment" size={16} color="#8b9cb3" />
-          <Text className="text-steam-gray ml-1 text-sm">{guide.commentCount || 0}</Text>
-        </View>
       </View>
     );
   }
   
   return (
     <View className="flex-row items-center bg-steam-light rounded-xl p-3 mb-4">
-      <View className="items-center mr-4">
-        <TouchableOpacity
-          onPress={handleUpvote}
-          disabled={!user}
-          className={`p-2 rounded-full mb-1 ${currentVote === 'upvoted' ? 'bg-green-500/20' : 'hover:bg-steam-blue/50'}`}
-        >
-          <MaterialIcons 
-            name="thumb-up" 
-            size={24} 
-            color={currentVote === 'upvoted' ? '#10B981' : '#66c0f4'} 
-          />
-        </TouchableOpacity>
-        
-        <Text className="text-white text-xl font-bold">{netVotes}</Text>
-        
-        <TouchableOpacity
-          onPress={handleDownvote}
-          disabled={!user}
-          className={`p-2 rounded-full mt-1 ${currentVote === 'downvoted' ? 'bg-red-500/20' : 'hover:bg-steam-blue/50'}`}
-        >
-          <MaterialIcons 
-            name="thumb-down" 
-            size={24} 
-            color={currentVote === 'downvoted' ? '#EF4444' : '#66c0f4'} 
-          />
-        </TouchableOpacity>
-        
-        <Text className="text-steam-gray text-xs mt-2">
-          {guide.upvotes?.length || 0} up • {guide.downvotes?.length || 0} down
-        </Text>
-      </View>
+      <TouchableOpacity
+        onPress={handleUpvote}
+        disabled={!user}
+        className={`p-2 ${currentVote === 'upvoted' ? 'bg-green-500/20' : ''} rounded-full mr-2`}
+      >
+        <MaterialIcons 
+          name="thumb-up" 
+          size={24} 
+          color={currentVote === 'upvoted' ? '#10B981' : '#66c0f4'} 
+        />
+      </TouchableOpacity>
       
-      <View className="ml-4 flex-1">
-        <Text className="text-white font-bold mb-1">Community Rating</Text>
-        <Text className="text-steam-gray text-sm">
-          {netVotes >= 0 ? 'Positive' : 'Negative'} rating from the community
+      <Text className="text-white text-xl font-bold mx-2 min-w-[30px] text-center">
+        {netVotes}
+      </Text>
+      
+      <TouchableOpacity
+        onPress={handleDownvote}
+        disabled={!user}
+        className={`p-2 ${currentVote === 'downvoted' ? 'bg-red-500/20' : ''} rounded-full ml-2`}
+      >
+        <MaterialIcons 
+          name="thumb-down" 
+          size={24} 
+          color={currentVote === 'downvoted' ? '#EF4444' : '#66c0f4'} 
+        />
+      </TouchableOpacity>
+      
+      {!user && (
+        <Text className="text-steam-accent text-xs ml-4">
+          Sign in to vote
         </Text>
-        {!user && (
-          <Text className="text-steam-accent text-xs mt-2">
-            Sign in to vote on this guide
-          </Text>
-        )}
-      </View>
+      )}
     </View>
   );
 };

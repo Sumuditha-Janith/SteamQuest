@@ -54,6 +54,18 @@ const CreateScreen = () => {
     loadExistingGameTitles();
   }, []);
 
+  useEffect(() => {
+    if (gameTitle.trim().length >= 2) {
+      const filtered = allGameTitles.filter(title =>
+        title.toLowerCase().includes(gameTitle.toLowerCase())
+      );
+      setSuggestions(filtered.slice(0, 5));
+      setShowSuggestions(filtered.length > 0);
+    } else {
+      setShowSuggestions(false);
+    }
+  }, [gameTitle, allGameTitles]);
+
   const loadExistingGameTitles = async () => {
     try {
       const guides = await guideService.getAllGuides();
@@ -70,16 +82,6 @@ const CreateScreen = () => {
 
   const updateGameTitle = (text: string) => {
     setFormState(prev => ({ ...prev, gameTitle: text }));
-    
-    if (text.trim().length >= 2) {
-      const filtered = allGameTitles.filter(title =>
-        title.toLowerCase().includes(text.toLowerCase())
-      );
-      setSuggestions(filtered.slice(0, 5));
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
-    }
   };
 
   const selectSuggestion = (suggestion: string) => {
@@ -190,6 +192,13 @@ const CreateScreen = () => {
   
       await guideService.addGuide(guideData, imageUri || undefined);
     
+      const newGameTitle = gameTitle.trim();
+      if (newGameTitle && !allGameTitles.includes(newGameTitle)) {
+        const updatedGameTitles = [...allGameTitles, newGameTitle];
+        updatedGameTitles.sort((a, b) => a.localeCompare(b));
+        setAllGameTitles(updatedGameTitles);
+      }
+
       Alert.alert(
         'Success!',
         'Your achievement guide has been published to the community.',
@@ -198,7 +207,6 @@ const CreateScreen = () => {
             text: 'Create Another',
             onPress: () => {
               resetForm();
-              loadExistingGameTitles();
             }
           },
           {
