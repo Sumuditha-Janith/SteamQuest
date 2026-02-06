@@ -1,39 +1,57 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import { Stack, useNavigation } from 'expo-router';
 import React from 'react';
+import { TouchableOpacity, View, Text } from 'react-native';
+
+const CustomHeader = ({ title, showBack = true }: { title: string, showBack?: boolean }) => {
+  const navigation = useNavigation();
+  
+  return (
+    <View className="bg-steam-blue h-16 flex-row items-center justify-between px-4">
+      <View className="flex-row items-center">
+        {showBack && (
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()}
+            className="mr-3"
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
+          </TouchableOpacity>
+        )}
+        <Text className="text-white text-xl font-bold">{title}</Text>
+      </View>
+    </View>
+  );
+};
 
 const TasksLayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: '#1b2838',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
+        headerShown: false,
       }}
     >
       <Stack.Screen 
         name="home" 
         options={{ 
-          title: 'Achievement Guides',
-
+          header: () => <CustomHeader title="Achievement Guides" showBack={false} />,
         }} 
       />
       <Stack.Screen 
         name="guidedetails" 
         options={{ 
-          title: 'Guide Details',
-          presentation: 'modal',
+          header: () => <CustomHeader title="Guide Details" />,
         }} 
       />
       <Stack.Screen 
         name="edit" 
         options={{ 
-          title: 'Edit Guide',
-          presentation: 'modal',
+          header: () => <CustomHeader title="Edit Guide" />,
+        }} 
+      />
+      <Stack.Screen 
+        name="settings" 
+        options={{ 
+          header: () => <CustomHeader title="Account Settings" />,
         }} 
       />
     </Stack>

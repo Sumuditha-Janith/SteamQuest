@@ -18,10 +18,12 @@ import { guideService, Guide } from '../../../services/guideService';
 import { useAuth } from '../../../context/AuthContext';
 import VoteButtons from '../../../components/VoteButtons';
 import CommentSection from '../../../components/CommentSection';
+import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg';
 
 const GuideDetailScreen = () => {
+  const navigation = useNavigation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
@@ -113,7 +115,6 @@ const GuideDetailScreen = () => {
           <TouchableOpacity onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
           </TouchableOpacity>
-          
           <TouchableOpacity onPress={handleShare}>
             <MaterialIcons name="share" size={24} color="#66c0f4" />
           </TouchableOpacity>

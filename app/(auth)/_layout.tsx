@@ -7,7 +7,14 @@ const AuthLayout = () => {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        contentStyle: { backgroundColor: '#1b2838' }
+        contentStyle: { backgroundColor: '#1b2838' },
+        headerStyle: {
+          backgroundColor: '#1b2838',
+        },
+        headerTintColor: '#66c0f4',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
       }}
     >
       <Stack.Screen name="login" options={{ title: 'Login' }} />

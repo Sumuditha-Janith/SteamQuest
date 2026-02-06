@@ -17,8 +17,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../../context/AuthContext';
 import { guideService, Guide } from '../../../services/guideService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 const EditScreen = () => {
+  const navigation = useNavigation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
@@ -156,7 +158,7 @@ const EditScreen = () => {
           {
             text: 'OK',
             onPress: () => {
-              router.back();
+              navigation.goBack();
             }
           }
         ]
@@ -335,7 +337,7 @@ const EditScreen = () => {
           {/* Action Buttons */}
           <View className="flex-row mb-8">
             <TouchableOpacity
-              onPress={() => router.back()}
+              onPress={() => navigation.goBack()}
               className="flex-1 bg-steam-light p-4 rounded-xl mr-2 items-center"
             >
               <Text className="text-steam-gray font-bold">Cancel</Text>
