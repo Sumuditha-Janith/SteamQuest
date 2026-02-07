@@ -25,7 +25,7 @@ const DashboardLayout = () => {
       }}
     >
       <Tabs.Screen
-        name="tasks"
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
@@ -49,6 +49,13 @@ const DashboardLayout = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="person" color={color} size={size} />
           ),
+        }}
+      />
+      {/* Hide the tasks tab from the tab bar */}
+      <Tabs.Screen
+        name="tasks"
+        options={{
+          href: null, // This hides the tab from the tab bar
         }}
       />
     </Tabs>

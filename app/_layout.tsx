@@ -19,7 +19,7 @@ function AuthRouting() {
       router.replace('/(auth)/login');
     } else if (user && inAuthGroup) {
 
-      router.replace('/(dashboard)/tasks/home');
+      router.replace('/(dashboard)/home');
     }
   }, [user, loading, segments]);
 

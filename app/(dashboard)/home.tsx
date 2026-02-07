@@ -11,13 +11,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAuth } from '../../../context/AuthContext';
-import { guideService, Guide } from '../../../services/guideService';
-import GuideCard from '../../../components/GuideCard';
+import { useAuth } from '../../context/AuthContext';
+import { guideService, Guide } from '../../services/guideService';
+import GuideCard from '../../components/GuideCard';
 import { ScrollView } from 'react-native';
-import { router } from 'expo-router';
+import { router, useRouter } from 'expo-router';
 
-// Separate SearchBar component to prevent re-renders
 const SearchBar = React.memo(({ 
   searchQuery, 
   setSearchQuery,
@@ -62,6 +61,7 @@ const SearchBar = React.memo(({
 });
 
 const HomeScreen = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const [guides, setGuides] = useState<Guide[]>([]);
   const [filteredGuides, setFilteredGuides] = useState<Guide[]>([]);

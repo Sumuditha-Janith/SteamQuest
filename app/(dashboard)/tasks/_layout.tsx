@@ -31,12 +31,6 @@ const TasksLayout = () => {
       }}
     >
       <Stack.Screen 
-        name="home" 
-        options={{ 
-          header: () => <CustomHeader title="Achievement Guides" showBack={false} />,
-        }} 
-      />
-      <Stack.Screen 
         name="guidedetails" 
         options={{ 
           header: () => <CustomHeader title="Guide Details" />,

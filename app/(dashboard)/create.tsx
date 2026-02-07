@@ -213,7 +213,7 @@ const CreateScreen = () => {
             text: 'View Guides',
             onPress: () => {
               resetForm();
-              router.replace('/(dashboard)/tasks/home');
+              router.replace('/(dashboard)/home');
             }
           }
         ]
