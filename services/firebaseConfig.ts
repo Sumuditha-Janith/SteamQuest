@@ -15,6 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = initializeAuth(app, {
+  // @ts-ignore - getReactNativePersistence might not be in types but exists at runtime
   persistence: require('firebase/auth').getReactNativePersistence(AsyncStorage)
 });
 
