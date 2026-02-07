@@ -99,7 +99,7 @@ const CreateScreen = () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need access to your photos to upload screenshots.');
+      Alert.alert('Permission required', 'We need access to your photos to upload images.');
       return;
     }
 
@@ -119,7 +119,7 @@ const CreateScreen = () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need camera access to take screenshots.');
+      Alert.alert('Permission required', 'We need camera access to take photos.');
       return;
     }
 
@@ -412,11 +412,11 @@ const CreateScreen = () => {
             />
           </View>
 
-          {/* Screenshot Upload */}
+          {/* Image Upload */}
           <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Screenshot (Optional)</Text>
+            <Text className="text-white font-bold mb-2">Image (Optional)</Text>
             <Text className="text-steam-gray text-sm mb-3">
-              Add a screenshot as proof or visual guide
+              Add an image of your choice or visual guide
             </Text>
             
             {imageUri ? (
@@ -437,7 +437,7 @@ const CreateScreen = () => {
               <View className="mb-3">
                 <View className="w-full h-48 bg-steam-blue justify-center items-center rounded-xl border-2 border-dashed border-steam-accent/50">
                   <MaterialIcons name="image" size={60} color="#2a475e" />
-                  <Text className="text-steam-accent mt-2">No screenshot selected</Text>
+                  <Text className="text-steam-accent mt-2">No image selected</Text>
                   <Text className="text-steam-gray text-xs mt-1">Will use default image</Text>
                 </View>
               </View>

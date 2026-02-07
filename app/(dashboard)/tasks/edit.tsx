@@ -82,7 +82,7 @@ const EditScreen = () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need access to your photos to upload screenshots.');
+      Alert.alert('Permission required', 'We need access to your photos to upload images.');
       return;
     }
 
@@ -102,7 +102,7 @@ const EditScreen = () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'We need camera access to take screenshots.');
+      Alert.alert('Permission required', 'We need camera access to take photos.');
       return;
     }
 
@@ -270,11 +270,11 @@ const EditScreen = () => {
             />
           </View>
 
-          {/* Screenshot Upload */}
+          {/* Image Upload */}
           <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Screenshot</Text>
+            <Text className="text-white font-bold mb-2">Image</Text>
             <Text className="text-steam-gray text-sm mb-3">
-              Update the screenshot (optional)
+              Update the image (optional)
             </Text>
 
             {imageUri && imageUri !== 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg' ? (

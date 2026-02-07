@@ -67,7 +67,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
       ) : (
         <View className="w-full h-40 bg-steam-blue justify-center items-center">
           <MaterialIcons name="sports-esports" size={60} color="#66c0f4" />
-          <Text className="text-steam-accent mt-2">No Screenshot</Text>
+          <Text className="text-steam-accent mt-2">No Image</Text>
         </View>
       )}
       
