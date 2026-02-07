@@ -128,6 +128,14 @@ const SettingsScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+
+          {/* Back button */}
+          <View className="p-4 flex-row justify-between items-center">
+            <TouchableOpacity onPress={() => router.push('/(dashboard)/profile')}>
+              <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
+            </TouchableOpacity>
+          </View>
+          
           <View className="p-4">
             {/* Account Info Card */}
             <View className="bg-steam-light rounded-xl p-4 mb-6">
