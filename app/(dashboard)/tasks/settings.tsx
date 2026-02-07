@@ -18,10 +18,10 @@ import { useAuth } from '../../../context/AuthContext';
 const SettingsScreen = () => {
   const router = useRouter();
   const { user, updateDisplayName, changePassword } = useAuth();
-  
+
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [updatingName, setUpdatingName] = useState(false);
-  
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,285 +29,167 @@ const SettingsScreen = () => {
   const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   const handleUpdateDisplayName = async () => {
-    if (!displayName.trim()) {
-      Alert.alert('Error', 'Please enter a display name');
-      return;
-    }
-
-    if (displayName === user?.displayName) {
-      Alert.alert('No Changes', 'Display name is the same as current');
-      return;
-    }
-
+    if (!displayName.trim()) return;
     setUpdatingName(true);
     try {
       await updateDisplayName(displayName.trim());
-      Alert.alert('Success', 'Display name updated successfully');
+      Alert.alert('Success', 'Display name updated');
       Keyboard.dismiss();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update display name');
+      Alert.alert('Error', error.message);
     } finally {
       setUpdatingName(false);
     }
   };
 
   const handleChangePassword = async () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all password fields');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Alert.alert('Error', 'New password must be at least 6 characters');
-      return;
-    }
-
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'New passwords do not match');
+      Alert.alert('Error', 'Passwords mismatch');
       return;
     }
 
     setChangingPassword(true);
     try {
       await changePassword(currentPassword, newPassword);
-      
-      Alert.alert(
-        'Success',
-        'Password changed successfully',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setCurrentPassword('');
-              setNewPassword('');
-              setConfirmPassword('');
-              setShowPasswordFields(false);
-              Keyboard.dismiss();
-            }
-          }
-        ]
-      );
+      Alert.alert('Success', 'Password changed');
+      setShowPasswordFields(false);
+      Keyboard.dismiss();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to change password');
+      Alert.alert('Error', error.message);
     } finally {
       setChangingPassword(false);
     }
   };
 
-  const handleResetPassword = async () => {
-    if (!user?.email) {
-      Alert.alert('Error', 'No email found for your account');
-      return;
-    }
-
-    Alert.alert(
-      'Reset Password',
-      `Send password reset email to ${user.email}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Send',
-          onPress: async () => {
-            try {
-              const { resetPassword } = useAuth();
-              await resetPassword(user.email!);
-              Alert.alert(
-                'Email Sent',
-                'Password reset email has been sent to your email address'
-              );
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to send reset email');
-            }
-          }
-        }
-      ]
-    );
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View className="px-4 py-2 border-b border-steam-light/30 flex-row items-center">
+          <TouchableOpacity onPress={() => router.back()} className="mr-4">
+            <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
+          </TouchableOpacity>
+          <Text className="text-white text-xl font-bold">Settings</Text>
+        </View>
 
-          {/* Back button */}
-          <View className="p-4 flex-row justify-between items-center">
-            <TouchableOpacity onPress={() => router.push('/(dashboard)/profile')}>
-              <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
-            </TouchableOpacity>
-          </View>
-          
-          <View className="p-4">
-            {/* Account Info Card */}
-            <View className="bg-steam-light rounded-xl p-4 mb-6">
-              <Text className="text-white font-bold text-lg mb-2">Account Information</Text>
-              <View className="space-y-3">
-                <View>
-                  <Text className="text-steam-gray text-sm">Email</Text>
-                  <Text className="text-white font-semibold">{user?.email}</Text>
-                </View>
-                
-                <View>
-                  <Text className="text-steam-gray text-sm">User ID</Text>
-                  <Text className="text-white font-semibold text-xs">{user?.uid}</Text>
-                </View>
-                
-                <View>
-                  <Text className="text-steam-gray text-sm">Account Created</Text>
-                  <Text className="text-white font-semibold">
-                    {user?.metadata?.creationTime 
-                      ? new Date(user.metadata.creationTime).toLocaleDateString()
-                      : 'N/A'
-                    }
-                  </Text>
-                </View>
+        <ScrollView
+          className="flex-1 p-4"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Account Info */}
+          <View className="bg-steam-light rounded-2xl p-5 mb-6 shadow-sm">
+            <View className="flex-row items-center mb-4 border-b border-steam-blue/20 pb-4">
+              <View className="w-12 h-12 bg-steam-blue rounded-full items-center justify-center mr-3">
+                <MaterialIcons name="person" size={24} color="#c7d5e0" />
+              </View>
+              <View>
+                <Text className="text-white font-bold text-lg">
+                  {user?.displayName || 'User'}
+                </Text>
+                <Text className="text-steam-gray">{user?.email}</Text>
               </View>
             </View>
 
-            {/* Change Display Name */}
-            <View className="bg-steam-light rounded-xl p-4 mb-6">
-              <Text className="text-white font-bold text-lg mb-4">Display Name</Text>
+            <Text className="text-steam-gray text-xs uppercase mb-2">
+              Display Name
+            </Text>
+
+            <View className="flex-row gap-2">
               <TextInput
-                placeholder="Enter your display name"
-                placeholderTextColor="#8b9cb3"
                 value={displayName}
                 onChangeText={setDisplayName}
-                className="bg-steam-blue text-white p-4 rounded-xl mb-4"
+                className="flex-1 bg-steam-blue/50 text-white p-3 rounded-xl border border-steam-blue"
               />
+
               <TouchableOpacity
                 onPress={handleUpdateDisplayName}
-                disabled={updatingName || !displayName.trim() || displayName === user?.displayName}
-                className={`${
-                  updatingName || !displayName.trim() || displayName === user?.displayName
-                    ? 'bg-steam-accent/50' 
-                    : 'bg-steam-accent'
-                } p-3 rounded-xl items-center`}
+                disabled={updatingName || displayName === user?.displayName}
+                className="bg-steam-accent px-4 justify-center rounded-xl disabled:opacity-50"
               >
                 {updatingName ? (
-                  <ActivityIndicator color="white" />
+                  <ActivityIndicator color="white" size="small" />
                 ) : (
-                  <Text className="text-white font-bold">Update Display Name</Text>
+                  <MaterialIcons name="check" size={20} color="white" />
                 )}
               </TouchableOpacity>
-              <Text className="text-steam-gray text-sm mt-2">
-                This name will appear on your guides
-              </Text>
             </View>
+          </View>
 
-            {/* Change Password */}
-            <View className="bg-steam-light rounded-xl p-4 mb-6">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="text-white font-bold text-lg">Password</Text>
-                {!showPasswordFields && (
+          {/* Security */}
+          <View className="bg-steam-light rounded-2xl p-5 mb-6">
+            <Text className="text-white font-bold text-lg mb-4">
+              Security
+            </Text>
+
+            {!showPasswordFields ? (
+              <TouchableOpacity
+                onPress={() => setShowPasswordFields(true)}
+                className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue"
+              >
+                <View className="flex-row items-center">
+                  <MaterialIcons name="lock" size={20} color="#66c0f4" />
+                  <Text className="text-white ml-3 font-medium">
+                    Change Password
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={20}
+                  color="#8b9cb3"
+                />
+              </TouchableOpacity>
+            ) : (
+              <View className="bg-steam-blue/30 p-4 rounded-xl border border-steam-blue">
+                <TextInput
+                  placeholder="Current Password"
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  secureTextEntry
+                  placeholderTextColor="#8b9cb3"
+                  className="bg-steam-blue text-white p-3 rounded-xl mb-3"
+                />
+
+                <TextInput
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  secureTextEntry
+                  placeholderTextColor="#8b9cb3"
+                  className="bg-steam-blue text-white p-3 rounded-xl mb-3"
+                />
+
+                <TextInput
+                  placeholder="Confirm New Password"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry
+                  placeholderTextColor="#8b9cb3"
+                  className="bg-steam-blue text-white p-3 rounded-xl mb-4"
+                />
+
+                <View className="flex-row gap-3">
                   <TouchableOpacity
-                    onPress={() => setShowPasswordFields(true)}
-                    className="flex-row items-center"
+                    onPress={() => setShowPasswordFields(false)}
+                    className="flex-1 bg-steam-blue p-3 rounded-xl items-center"
                   >
-                    <Text className="text-steam-accent mr-2">Change Password</Text>
-                    <MaterialIcons name="edit" size={18} color="#66c0f4" />
+                    <Text className="text-steam-gray">Cancel</Text>
                   </TouchableOpacity>
-                )}
-              </View>
 
-              {showPasswordFields ? (
-                <View className="space-y-3">
-                  <TextInput
-                    placeholder="Current Password"
-                    placeholderTextColor="#8b9cb3"
-                    value={currentPassword}
-                    onChangeText={setCurrentPassword}
-                    secureTextEntry
-                    className="bg-steam-blue text-white p-4 rounded-xl"
-                  />
-                  
-                  <TextInput
-                    placeholder="New Password"
-                    placeholderTextColor="#8b9cb3"
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                    secureTextEntry
-                    className="bg-steam-blue text-white p-4 rounded-xl"
-                  />
-                  
-                  <TextInput
-                    placeholder="Confirm New Password"
-                    placeholderTextColor="#8b9cb3"
-                    value={confirmPassword}
-                    onChangeText={setConfirmPassword}
-                    secureTextEntry
-                    className="bg-steam-blue text-white p-4 rounded-xl mb-3"
-                  />
-                  
-                  <View className="flex-row space-x-2">
-                    <TouchableOpacity
-                      onPress={() => {
-                        setShowPasswordFields(false);
-                        setCurrentPassword('');
-                        setNewPassword('');
-                        setConfirmPassword('');
-                      }}
-                      className="flex-1 bg-steam-blue p-3 rounded-xl items-center"
-                    >
-                      <Text className="text-steam-gray font-bold">Cancel</Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity
-                      onPress={handleChangePassword}
-                      disabled={changingPassword}
-                      className={`flex-1 ${
-                        changingPassword ? 'bg-steam-accent/50' : 'bg-steam-accent'
-                      } p-3 rounded-xl items-center`}
-                    >
-                      {changingPassword ? (
-                        <ActivityIndicator color="white" />
-                      ) : (
-                        <Text className="text-white font-bold">Update Password</Text>
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={handleResetPassword}
-                  className="bg-steam-accent/20 p-4 rounded-xl flex-row items-center justify-between"
-                >
-                  <View className="flex-row items-center">
-                    <MaterialIcons name="email" size={20} color="#66c0f4" />
-                    <Text className="text-steam-accent ml-3">Reset Password via Email</Text>
-                  </View>
-                  <MaterialIcons name="chevron-right" size={20} color="#66c0f4" />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* Security Information */}
-            <View className="bg-steam-light rounded-xl p-4">
-              <Text className="text-white font-bold text-lg mb-4">Security Tips</Text>
-              <View className="space-y-2">
-                <View className="flex-row items-start">
-                  <MaterialIcons name="lock" size={16} color="#10B981" style={{ marginTop: 2 }} />
-                  <Text className="text-steam-gray ml-2 flex-1">
-                    Use a strong password with letters, numbers, and special characters
-                  </Text>
-                </View>
-                
-                <View className="flex-row items-start">
-                  <MaterialIcons name="warning" size={16} color="#F59E0B" style={{ marginTop: 2 }} />
-                  <Text className="text-steam-gray ml-2 flex-1">
-                    Never share your password with anyone
-                  </Text>
-                </View>
-                
-                <View className="flex-row items-start">
-                  <MaterialIcons name="check-circle" size={16} color="#66c0f4" style={{ marginTop: 2 }} />
-                  <Text className="text-steam-gray ml-2 flex-1">
-                    Your password is encrypted and securely stored
-                  </Text>
+                  <TouchableOpacity
+                    onPress={handleChangePassword}
+                    disabled={changingPassword}
+                    className="flex-1 bg-steam-accent p-3 rounded-xl items-center"
+                  >
+                    {changingPassword ? (
+                      <ActivityIndicator color="white" size="small" />
+                    ) : (
+                      <Text className="text-white font-bold">Update</Text>
+                    )}
+                  </TouchableOpacity>
                 </View>
               </View>
-            </View>
-
-            {/* Spacer */}
-            <View className="h-8" />
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -27,16 +27,20 @@ const GuideCard: React.FC<GuideCardProps> = ({
   onVoteUpdate 
 }) => {
   const router = useRouter();
-  
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Easy': return '#10B981';
-      case 'Medium': return '#F59E0B';
-      case 'Hard': return '#EF4444';
-      case 'Very Hard': return '#7C3AED';
-      default: return '#6B7280';
+      case 'Easy': return 'bg-green-500/20 text-green-400';
+      case 'Medium': return 'bg-yellow-500/20 text-yellow-400';
+      case 'Hard': return 'bg-red-500/20 text-red-400';
+      case 'Very Hard': return 'bg-purple-500/20 text-purple-400';
+      default: return 'bg-gray-500/20 text-gray-400';
     }
   };
+
+  const diffStyle = getDifficultyColor(guide.difficulty);
+  // Extract classes manually since dynamic class names in tailwind sometimes fail in RN if not full strings
+  const [bgClass, textClass] = diffStyle.split(' ');
 
   const handlePress = () => {
     router.push({
@@ -45,130 +49,83 @@ const GuideCard: React.FC<GuideCardProps> = ({
     } as any);
   };
 
-  const handleVoteUpdate = (updatedGuide: Guide) => {
-    if (onVoteUpdate) {
-      onVoteUpdate(updatedGuide);
-    }
-  };
-
-  const netVotes = (guide.upvotes?.length || 0) - (guide.downvotes?.length || 0);
-
   return (
     <TouchableOpacity 
       onPress={handlePress}
-      className="bg-steam-light rounded-xl mb-4 overflow-hidden shadow-lg"
+      activeOpacity={0.9}
+      className="bg-steam-light rounded-2xl mb-5 overflow-hidden shadow-md shadow-black/40 border border-steam-light/50"
     >
-      {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/Jw3yBsPq/og-EGSpic.jpg' ? (
-        <Image 
-          source={{ uri: guide.imageUrl }}
-          style={styles.image}
-          className="w-full h-40"
-        />
-      ) : (
-        <View className="w-full h-40 bg-steam-blue justify-center items-center">
-          <MaterialIcons name="sports-esports" size={60} color="#66c0f4" />
-          <Text className="text-steam-accent mt-2">No Image</Text>
-        </View>
-      )}
+      <View className="h-44 w-full bg-steam-blue relative">
+          {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/Jw3yBsPq/og-EGSpic.jpg' ? (
+            <Image 
+              source={{ uri: guide.imageUrl }}
+              className="w-full h-full"
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="w-full h-full items-center justify-center bg-steam-blue/80">
+              <MaterialIcons name="gamepad" size={48} color="#2a475e" />
+            </View>
+          )}
+          
+          {/* Difficulty Badge Overlay */}
+          <View className={`absolute top-3 right-3 px-3 py-1.5 rounded-lg ${bgClass} backdrop-blur-md`}>
+             <Text className={`text-xs font-bold ${textClass} uppercase tracking-wide`}>
+                {guide.difficulty}
+             </Text>
+          </View>
+      </View>
       
       <View className="p-4">
-        <View className="flex-row justify-between items-start mb-2">
-          <View className="flex-1">
-            <Text className="text-white text-lg font-bold" numberOfLines={1}>
+        <View className="mb-2">
+            <Text className="text-steam-accent text-sm font-bold uppercase tracking-wider mb-1 opacity-90" numberOfLines={1}>
               {guide.gameTitle}
             </Text>
-            <Text className="text-steam-accent text-base font-semibold mb-1" numberOfLines={1}>
+            <Text className="text-white text-xl font-bold leading-tight" numberOfLines={2}>
               {guide.achievementName}
             </Text>
-          </View>
-          
-          <View className="flex-row items-center ml-2">
-            <View 
-              className="px-2 py-1 rounded-md"
-              style={{ backgroundColor: getDifficultyColor(guide.difficulty) }}
-            >
-              <Text className="text-white text-xs font-bold">
-                {guide.difficulty}
-              </Text>
-            </View>
-          </View>
         </View>
         
-        <Text className="text-steam-gray text-sm mb-3" numberOfLines={2}>
+        <Text className="text-steam-gray text-base leading-6 mb-4" numberOfLines={2}>
           {guide.content}
         </Text>
         
-        {/* Votes and Comments Stats */}
-        <View className="flex-row items-center mb-3">
-          <View className="flex-row items-center mr-4">
-            <MaterialIcons name="thumb-up" size={14} color="#10B981" />
-            <Text className="text-steam-gray ml-1 text-xs">{guide.upvotes?.length || 0}</Text>
-          </View>
-          
-          <View className="flex-row items-center mr-4">
-            <MaterialIcons name="thumb-down" size={14} color="#EF4444" />
-            <Text className="text-steam-gray ml-1 text-xs">{guide.downvotes?.length || 0}</Text>
-          </View>
-          
-          <View className="flex-row items-center">
-            <MaterialIcons name="comment" size={14} color="#66c0f4" />
-            <Text className="text-steam-gray ml-1 text-xs">{guide.commentCount || 0}</Text>
-          </View>
-          
-          <Text className="text-steam-gray text-xs ml-auto">
-            {new Date(guide.createdAt).toLocaleDateString()}
-          </Text>
-        </View>
-        
-        <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center">
-            <MaterialIcons name="person" size={16} color="#66c0f4" />
-            <Text className="text-steam-accent ml-1 text-sm">
-              {guide.authorName}
-            </Text>
-          </View>
-          
-          {/* Compact Vote Buttons */}
-          <VoteButtons 
-            guide={guide} 
-            onVoteUpdate={handleVoteUpdate}
-            compact 
-          />
+        <View className="flex-row items-center justify-between border-t border-steam-blue/50 pt-3">
+             <View className="flex-row items-center">
+                 <View className="w-6 h-6 bg-steam-blue rounded-full items-center justify-center mr-2">
+                    <Text className="text-[10px] text-white font-bold">
+                        {guide.authorName?.charAt(0).toUpperCase()}
+                    </Text>
+                 </View>
+                 <Text className="text-steam-gray text-xs">{guide.authorName}</Text>
+             </View>
+             
+             <View className="flex-row items-center space-x-3">
+                 <View className="flex-row items-center bg-steam-blue/30 px-2 py-1 rounded-lg">
+                    <MaterialIcons name="comment" size={14} color="#66c0f4" />
+                    <Text className="text-steam-gray ml-1.5 text-xs font-medium">{guide.commentCount || 0}</Text>
+                 </View>
+                 <VoteButtons guide={guide} onVoteUpdate={onVoteUpdate || (() => {})} compact />
+             </View>
         </View>
         
         {showActions && (onDelete || onEdit) && (
-          <View className="mt-3 pt-3 border-t border-steam-blue">
-            <View className="flex-row">
+          <View className="mt-4 pt-3 border-t border-steam-blue/50 flex-row gap-2">
               {onEdit && (
-                <TouchableOpacity
-                  onPress={onEdit}
-                  className="flex-1 bg-blue-500/20 py-2 rounded-lg mr-1 flex-row justify-center items-center"
-                >
-                  <MaterialIcons name="edit" size={18} color="#3B82F6" />
-                  <Text className="text-blue-400 ml-2 font-semibold">Edit</Text>
+                <TouchableOpacity onPress={onEdit} className="flex-1 bg-blue-500/10 py-2.5 rounded-xl flex-row justify-center items-center">
+                   <Text className="text-blue-400 font-semibold ml-2">Edit</Text>
                 </TouchableOpacity>
               )}
               {onDelete && (
-                <TouchableOpacity
-                  onPress={onDelete}
-                  className="flex-1 bg-red-500/20 py-2 rounded-lg ml-1 flex-row justify-center items-center"
-                >
-                  <MaterialIcons name="delete" size={18} color="#EF4444" />
-                  <Text className="text-red-400 ml-2 font-semibold">Delete</Text>
+                <TouchableOpacity onPress={onDelete} className="flex-1 bg-red-500/10 py-2.5 rounded-xl flex-row justify-center items-center">
+                   <Text className="text-red-400 font-semibold ml-2">Delete</Text>
                 </TouchableOpacity>
               )}
-            </View>
           </View>
         )}
       </View>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    resizeMode: 'cover',
-  },
-});
 
 export default GuideCard;

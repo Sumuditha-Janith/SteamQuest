@@ -16,7 +16,6 @@ import { useAuth } from '../../context/AuthContext';
 const ResetPassword = () => {
   const router = useRouter();
   const { resetPassword } = useAuth();
-  
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -50,68 +49,63 @@ const ResetPassword = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View className="flex-1 justify-center items-center bg-steam-blue p-6">
-        <View className="w-full max-w-md bg-steam-light/80 backdrop-blur-md rounded-2xl p-8 shadow-lg">
+      <View className="flex-1 justify-center items-center bg-steam-blue px-6">
+        <View className="w-full max-w-md bg-steam-light/90 border border-steam-accent/10 rounded-3xl p-8 shadow-2xl shadow-black relative">
+          
           <TouchableOpacity 
             onPress={() => router.back()}
-            className="absolute top-4 left-4 z-10"
+            className="absolute top-6 left-6 z-10 p-2 bg-steam-blue rounded-full"
           >
             <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
           </TouchableOpacity>
           
-          <View className="items-center mb-6">
-            <MaterialIcons name="lock-reset" size={60} color="#66c0f4" />
-            <Text className="text-2xl font-bold mt-4 text-center text-white">
+          <View className="items-center mb-8 mt-4">
+            <View className="w-20 h-20 bg-steam-blue rounded-full items-center justify-center mb-4 border border-steam-accent/30">
+                <MaterialIcons name="lock-reset" size={40} color="#66c0f4" />
+            </View>
+            <Text className="text-2xl font-bold mt-2 text-center text-white">
               Reset Password
             </Text>
-            <Text className="text-steam-gray text-center mt-2">
-              Enter your email to receive a password reset link
+            <Text className="text-steam-gray text-center mt-2 px-4 leading-5">
+              Enter the email associated with your account and we'll send you a link to reset your password.
             </Text>
           </View>
           
-          <TextInput
-            placeholder="Email Address"
-            placeholderTextColor="#8b9cb3"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            className="border border-steam-accent/30 bg-steam-blue p-4 mb-6 rounded-xl text-white"
-            editable={!emailSent}
-          />
+          <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-8">
+            <MaterialIcons name="email" size={20} color="#8b9cb3" />
+            <TextInput
+                placeholder="Email Address"
+                placeholderTextColor="#8b9cb3"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                className="flex-1 ml-3 text-white text-base"
+                editable={!emailSent}
+            />
+          </View>
           
           <TouchableOpacity
             onPress={handleResetPassword}
             disabled={loading || emailSent}
             className={`${
               loading || emailSent ? 'bg-steam-accent/50' : 'bg-steam-accent'
-            } px-6 py-4 rounded-2xl`}
+            } w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
           >
             {loading ? (
               <ActivityIndicator color="white" />
             ) : emailSent ? (
               <View className="flex-row items-center justify-center">
                 <MaterialIcons name="check-circle" size={20} color="white" />
-                <Text className="text-white text-lg ml-2 text-center font-semibold">
+                <Text className="text-white text-lg ml-2 text-center font-bold">
                   Email Sent
                 </Text>
               </View>
             ) : (
-              <Text className="text-white text-lg text-center font-semibold">
+              <Text className="text-white text-lg text-center font-bold tracking-wide">
                 Send Reset Link
               </Text>
             )}
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="mt-6"
-            disabled={loading}
-          >
-            <Text className="text-steam-gray text-center">
-              Remember your password?{' '}
-              <Text className="text-steam-accent font-semibold">Back to Login</Text>
-            </Text>
           </TouchableOpacity>
         </View>
       </View>

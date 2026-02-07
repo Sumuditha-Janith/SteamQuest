@@ -72,7 +72,6 @@ const CreateScreen = () => {
       const uniqueGameTitles = Array.from(
         new Set(guides.map(guide => guide.gameTitle.trim()))
       ).filter(title => title.length > 0);
-      
       uniqueGameTitles.sort((a, b) => a.localeCompare(b));
       setAllGameTitles(uniqueGameTitles);
     } catch (error) {
@@ -97,19 +96,16 @@ const CreateScreen = () => {
 
   const handleSelectImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
     if (status !== 'granted') {
       Alert.alert('Permission required', 'We need access to your photos to upload images.');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.8,
     });
-
     if (!result.canceled) {
       setFormState(prev => ({ ...prev, imageUri: result.assets[0].uri }));
     }
@@ -117,18 +113,15 @@ const CreateScreen = () => {
 
   const handleTakePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    
     if (status !== 'granted') {
       Alert.alert('Permission required', 'We need camera access to take photos.');
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.8,
     });
-
     if (!result.canceled) {
       setFormState(prev => ({ ...prev, imageUri: result.assets[0].uri }));
     }
@@ -139,12 +132,10 @@ const CreateScreen = () => {
       Alert.alert('Missing Information', 'Please fill in all required fields.');
       return;
     }
-
     if (!user) {
       Alert.alert('Authentication Required', 'You need to be logged in to create a guide.');
       return;
     }
-
     try {
       const existingGuides = await guideService.getAllGuides();
       const duplicateExists = existingGuides.some(
@@ -152,17 +143,13 @@ const CreateScreen = () => {
           guide.gameTitle.toLowerCase() === gameTitle.trim().toLowerCase() &&
           guide.achievementName.toLowerCase() === achievementName.trim().toLowerCase()
       );
-
       if (duplicateExists) {
         Alert.alert(
           'Duplicate Guide',
-          `A guide for "${gameTitle.trim()}" - "${achievementName.trim()}" already exists. Do you want to continue?`,
+          `A guide for "${gameTitle.trim()}" - "${achievementName.trim()}" already exists.`,
           [
             { text: 'Cancel', style: 'cancel' },
-            { 
-              text: 'Continue Anyway', 
-              onPress: () => createGuide()
-            }
+            { text: 'Continue Anyway', onPress: () => createGuide() }
           ]
         );
         return;
@@ -170,7 +157,6 @@ const CreateScreen = () => {
     } catch (error) {
       console.error('Error checking for duplicates:', error);
     }
-
     createGuide();
   };
 
@@ -187,40 +173,23 @@ const CreateScreen = () => {
         estimatedTime: estimatedTime.trim() || undefined,
         platform: platforms,
       };
-
-      console.log('Creating guide with imageUri:', imageUri);
-  
       await guideService.addGuide(guideData, imageUri || undefined);
-    
+      
       const newGameTitle = gameTitle.trim();
       if (newGameTitle && !allGameTitles.includes(newGameTitle)) {
-        const updatedGameTitles = [...allGameTitles, newGameTitle];
-        updatedGameTitles.sort((a, b) => a.localeCompare(b));
-        setAllGameTitles(updatedGameTitles);
+        setAllGameTitles(prev => [...prev, newGameTitle].sort());
       }
 
       Alert.alert(
         'Success!',
-        'Your achievement guide has been published to the community.',
+        'Your achievement guide has been published.',
         [
-          {
-            text: 'Create Another',
-            onPress: () => {
-              resetForm();
-            }
-          },
-          {
-            text: 'View Guides',
-            onPress: () => {
-              resetForm();
-              router.replace('/(dashboard)/home');
-            }
-          }
+          { text: 'Create Another', onPress: () => resetForm() },
+          { text: 'View Guides', onPress: () => { resetForm(); router.replace('/(dashboard)/home'); } }
         ]
       );
     } catch (error) {
       Alert.alert('Error', 'Failed to publish guide. Please try again.');
-      console.error('Error creating guide:', error);
     } finally {
       setLoading(false);
     }
@@ -228,15 +197,9 @@ const CreateScreen = () => {
 
   const togglePlatform = (platform: string) => {
     if (platforms.includes(platform)) {
-      setFormState(prev => ({ 
-        ...prev, 
-        platforms: prev.platforms.filter(p => p !== platform) 
-      }));
+      setFormState(prev => ({ ...prev, platforms: prev.platforms.filter(p => p !== platform) }));
     } else {
-      setFormState(prev => ({ 
-        ...prev, 
-        platforms: [...prev.platforms, platform] 
-      }));
+      setFormState(prev => ({ ...prev, platforms: [...prev.platforms, platform] }));
     }
   };
 
@@ -250,148 +213,84 @@ const CreateScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
-        <ScrollView 
-          className="flex-1 p-4" 
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+        <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View className="mb-6">
-            <Text className="text-2xl font-bold text-white mb-2">Create New Guide</Text>
-            <Text className="text-steam-gray">
-              Share your achievement journey with the community
-            </Text>
+            <Text className="text-2xl font-bold text-white mb-2">Create Guide</Text>
+            <Text className="text-steam-gray">Share your knowledge with the world.</Text>
           </View>
 
-          {/* Game Title with Auto-suggest */}
-          <View className="mb-4 relative">
-            <Text className="text-white font-bold mb-2">Game Title *</Text>
+          {/* Game Title */}
+          <View className="mb-5 relative z-20">
+            <Text className="text-white font-semibold mb-2 ml-1">Game Title <Text className="text-red-400">*</Text></Text>
             <View>
               <TextInput
-                placeholder="e.g., Cyberpunk 2077, Elden Ring"
+                placeholder="e.g., Cyberpunk 2077"
                 placeholderTextColor="#8b9cb3"
                 value={gameTitle}
                 onChangeText={(value) => updateFormField('gameTitle', value)}
-                className="bg-steam-light text-white p-4 rounded-xl"
-                returnKeyType="next"
+                className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
               />
-              
-              {/* Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
-                <View className="absolute top-full left-0 right-0 z-10 mt-1 bg-steam-light border border-steam-accent/30 rounded-xl shadow-lg max-h-48 overflow-hidden">
-                  <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    className="max-h-48"
-                  >
-                    {suggestions.map((suggestion, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        onPress={() => selectSuggestion(suggestion)}
-                        className={`px-4 py-3 border-b border-steam-blue/30 ${
-                          index === suggestions.length - 1 ? 'border-b-0' : ''
-                        } active:bg-steam-blue/50`}
-                      >
-                        <View className="flex-row items-center">
-                          <MaterialIcons 
-                            name="videogame-asset" 
-                            size={20} 
-                            color="#66c0f4" 
-                            className="mr-3"
-                          />
-                          <Text className="text-white flex-1">{suggestion}</Text>
-                          <MaterialIcons 
-                            name="arrow-drop-up" 
-                            size={20} 
-                            color="#66c0f4" 
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-              
-              {/* Auto-suggest Info */}
-              {showSuggestions && suggestions.length > 0 && (
-                <View className="mt-2 p-2 bg-steam-blue/50 rounded-lg">
-                  <Text className="text-steam-accent text-xs">
-                    Found {suggestions.length} matching game{ suggestions.length > 1 ? 's' : '' }. 
-                    Tap to select and ensure consistent naming.
-                  </Text>
-                </View>
-              )}
-              
-              {/* Popular Games Quick Picks */}
-              {gameTitle.length === 0 && (
-                <View className="mt-3">
-                  <Text className="text-steam-gray text-sm mb-2">Popular games:</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View className="flex-row">
-                      {allGameTitles.slice(0, 6).map((title, index) => (
-                        <TouchableOpacity
-                          key={index}
-                          onPress={() => selectSuggestion(title)}
-                          className="bg-steam-blue/50 px-3 py-2 rounded-lg mr-2"
-                        >
-                          <Text className="text-steam-accent text-sm">{title}</Text>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </ScrollView>
+                <View className="absolute top-full left-0 right-0 mt-1 bg-steam-light border border-steam-accent/30 rounded-xl shadow-lg z-50">
+                  {suggestions.map((suggestion, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => selectSuggestion(suggestion)}
+                      className={`p-4 border-b border-steam-blue/30 ${index === suggestions.length - 1 ? 'border-b-0' : ''}`}
+                    >
+                      <Text className="text-white">{suggestion}</Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
               )}
             </View>
           </View>
 
           {/* Achievement Name */}
-          <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Achievement Name *</Text>
+          <View className="mb-5">
+            <Text className="text-white font-semibold mb-2 ml-1">Achievement Name <Text className="text-red-400">*</Text></Text>
             <TextInput
-              placeholder="e.g., The World, Don't Fear the Reaper"
+              placeholder="e.g., The World"
               placeholderTextColor="#8b9cb3"
               value={achievementName}
               onChangeText={(value) => updateFormField('achievementName', value)}
-              className="bg-steam-light text-white p-4 rounded-xl"
-              returnKeyType="next"
+              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
             />
           </View>
 
           {/* Difficulty */}
-          <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Difficulty</Text>
-            <View className="flex-row flex-wrap">
+          <View className="mb-5">
+            <Text className="text-white font-semibold mb-2 ml-1">Difficulty</Text>
+            <View className="flex-row flex-wrap gap-2">
               {difficulties.map((diff) => (
                 <TouchableOpacity
                   key={diff}
                   onPress={() => updateFormField('difficulty', diff)}
-                  className={`px-4 py-2 rounded-full mr-2 mb-2 ${
-                    difficulty === diff ? 'bg-steam-accent' : 'bg-steam-light'
+                  className={`px-5 py-2.5 rounded-full border ${
+                    difficulty === diff ? 'bg-steam-accent border-steam-accent' : 'bg-steam-light border-steam-light'
                   }`}
                 >
-                  <Text className={difficulty === diff ? 'text-white font-bold' : 'text-steam-gray'}>
-                    {diff}
-                  </Text>
+                  <Text className={`font-semibold ${difficulty === diff ? 'text-white' : 'text-steam-gray'}`}>{diff}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
           {/* Platform */}
-          <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Platform</Text>
-            <View className="flex-row flex-wrap">
-              {['PC', 'PlayStation', 'Xbox', 'Nintendo Switch'].map((platform) => (
+          <View className="mb-5">
+            <Text className="text-white font-semibold mb-2 ml-1">Platform</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {['PC', 'PlayStation', 'Xbox', 'Switch'].map((platform) => (
                 <TouchableOpacity
                   key={platform}
                   onPress={() => togglePlatform(platform)}
-                  className={`px-4 py-2 rounded-full mr-2 mb-2 ${
-                    platforms.includes(platform) ? 'bg-steam-accent' : 'bg-steam-light'
+                  className={`px-4 py-2 rounded-full flex-row items-center border ${
+                    platforms.includes(platform) ? 'bg-steam-accent/20 border-steam-accent' : 'bg-steam-light border-steam-light'
                   }`}
                 >
-                  <Text className={platforms.includes(platform) ? 'text-white font-bold' : 'text-steam-gray'}>
+                   {platforms.includes(platform) && <MaterialIcons name="check" size={14} color="#66c0f4" style={{marginRight: 4}} />}
+                  <Text className={platforms.includes(platform) ? 'text-steam-accent font-semibold' : 'text-steam-gray'}>
                     {platform}
                   </Text>
                 </TouchableOpacity>
@@ -400,187 +299,93 @@ const CreateScreen = () => {
           </View>
 
           {/* Estimated Time */}
-          <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Estimated Time</Text>
+          <View className="mb-5">
+            <Text className="text-white font-semibold mb-2 ml-1">Estimated Time</Text>
             <TextInput
-              placeholder="e.g., 2-3 hours, 30 minutes"
+              placeholder="e.g., 2-3 hours"
               placeholderTextColor="#8b9cb3"
               value={estimatedTime}
               onChangeText={(value) => updateFormField('estimatedTime', value)}
-              className="bg-steam-light text-white p-4 rounded-xl"
-              returnKeyType="next"
+              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
             />
           </View>
 
           {/* Image Upload */}
-          <View className="mb-4">
-            <Text className="text-white font-bold mb-2">Image (Optional)</Text>
-            <Text className="text-steam-gray text-sm mb-3">
-              Add an image of your choice or visual guide
-            </Text>
-            
-            {imageUri ? (
-              <View className="mb-3">
-                <Image 
-                  source={{ uri: imageUri }}
-                  className="w-full h-48 rounded-xl"
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  onPress={() => updateFormField('imageUri', null)}
-                  className="absolute top-2 right-2 bg-red-500 rounded-full p-2"
-                >
-                  <MaterialIcons name="close" size={20} color="white" />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View className="mb-3">
-                <View className="w-full h-48 bg-steam-blue justify-center items-center rounded-xl border-2 border-dashed border-steam-accent/50">
-                  <MaterialIcons name="image" size={60} color="#2a475e" />
-                  <Text className="text-steam-accent mt-2">No image selected</Text>
-                  <Text className="text-steam-gray text-xs mt-1">Will use default image</Text>
+          <View className="mb-6">
+            <Text className="text-white font-semibold mb-2 ml-1">Visual Guide (Optional)</Text>
+            <View className="bg-steam-light border border-steam-light rounded-xl overflow-hidden">
+                {imageUri ? (
+                    <View>
+                        <Image source={{ uri: imageUri }} className="w-full h-48" resizeMode="cover" />
+                        <TouchableOpacity 
+                            onPress={() => updateFormField('imageUri', null)}
+                            className="absolute top-2 right-2 bg-black/60 rounded-full p-2"
+                        >
+                            <MaterialIcons name="close" size={20} color="white" />
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <View className="h-40 justify-center items-center border-2 border-dashed border-steam-blue/50 rounded-xl m-2 bg-steam-blue/20">
+                        <MaterialIcons name="add-photo-alternate" size={40} color="#2a475e" />
+                        <Text className="text-steam-gray mt-2">Add a screenshot</Text>
+                    </View>
+                )}
+                
+                <View className="flex-row border-t border-steam-blue/50">
+                    <TouchableOpacity onPress={handleSelectImage} className="flex-1 p-4 items-center border-r border-steam-blue/50 active:bg-steam-blue/50">
+                         <View className="flex-row items-center">
+                            <MaterialIcons name="photo-library" size={20} color="#66c0f4" />
+                            <Text className="text-steam-accent ml-2 font-medium">Gallery</Text>
+                         </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleTakePhoto} className="flex-1 p-4 items-center active:bg-steam-blue/50">
+                         <View className="flex-row items-center">
+                            <MaterialIcons name="camera-alt" size={20} color="#66c0f4" />
+                            <Text className="text-steam-accent ml-2 font-medium">Camera</Text>
+                         </View>
+                    </TouchableOpacity>
                 </View>
-              </View>
-            )}
-            
-            <View className="flex-row">
-              <TouchableOpacity
-                onPress={handleSelectImage}
-                className="flex-1 bg-steam-light p-4 rounded-xl mr-2 items-center"
-              >
-                <MaterialIcons name="photo-library" size={24} color="#66c0f4" />
-                <Text className="text-steam-accent mt-2">Gallery</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                onPress={handleTakePhoto}
-                className="flex-1 bg-steam-light p-4 rounded-xl ml-2 items-center"
-              >
-                <MaterialIcons name="camera-alt" size={24} color="#66c0f4" />
-                <Text className="text-steam-accent mt-2">Camera</Text>
-              </TouchableOpacity>
             </View>
           </View>
 
-          {/* Guide Content */}
-          <View className="mb-6">
-            <Text className="text-white font-bold mb-2">Guide Steps *</Text>
+          {/* Content */}
+          <View className="mb-8">
+            <Text className="text-white font-semibold mb-2 ml-1">Guide Instructions <Text className="text-red-400">*</Text></Text>
             <TextInput
-              placeholder="Provide step-by-step instructions for unlocking this achievement..."
+              placeholder="Describe step-by-step how to unlock this achievement..."
               placeholderTextColor="#8b9cb3"
               value={content}
               onChangeText={(value) => updateFormField('content', value)}
               multiline
               numberOfLines={6}
               textAlignVertical="top"
-              className="bg-steam-light text-white p-4 rounded-xl min-h-[150px]"
-              returnKeyType="done"
-              blurOnSubmit={true}
+              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 min-h-[160px] text-base leading-6"
             />
           </View>
 
-          {/* Game Statistics */}
-          {allGameTitles.includes(gameTitle.trim()) && (
-            <View className="mb-6 bg-steam-light/50 rounded-xl p-4">
-              <View className="flex-row items-center mb-2">
-                <MaterialIcons name="info" size={20} color="#66c0f4" />
-                <Text className="text-white font-bold ml-2">Game Information</Text>
-              </View>
-              <Text className="text-steam-accent">
-                <MaterialIcons name="check-circle" size={16} color="#10B981" /> 
-                <Text className="ml-2 text-green-400">
-                  "{gameTitle.trim()}" already exists in our database!
-                </Text>
-              </Text>
-              <Text className="text-steam-gray text-sm mt-1">
-                Great choice! Other players have already shared guides for this game. 
-                By using the same name, you're helping keep the community organized.
-              </Text>
-            </View>
-          )}
-
-          {/* Action Buttons */}
-          <View className="flex-row mb-8 space-x-2">
+          {/* Actions */}
+          <View className="flex-row gap-3 mb-10">
             <TouchableOpacity
-              onPress={() => {
-                Alert.alert(
-                  'Clear Form',
-                  'Are you sure you want to clear all fields?',
-                  [
-                    { text: 'Cancel', style: 'cancel' },
-                    {
-                      text: 'Clear',
-                      style: 'destructive',
-                      onPress: resetForm
-                    }
-                  ]
-                );
-              }}
-              className="flex-1 bg-steam-light p-4 rounded-xl items-center"
+              onPress={() => Alert.alert('Clear', 'Clear all fields?', [{text: 'Cancel'}, {text: 'Clear', onPress: resetForm, style: 'destructive'}])}
+              className="flex-1 bg-steam-light py-4 rounded-xl items-center justify-center border border-steam-light active:opacity-80"
             >
-              <MaterialIcons name="delete-sweep" size={20} color="#8b9cb3" />
-              <Text className="text-steam-gray font-bold mt-1">Clear</Text>
+              <Text className="text-steam-gray font-bold">Clear</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               onPress={handleSubmit}
               disabled={loading}
-              className={`flex-2 ${
-                loading ? 'bg-steam-accent/50' : 'bg-steam-accent'
-              } p-4 rounded-xl items-center`}
+              className="flex-[2] bg-steam-accent py-4 rounded-xl items-center justify-center shadow-lg shadow-steam-accent/20 active:opacity-90"
             >
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <View className="text-white text-lg font-bold">
+                <View className="flex-row items-center">
                   <MaterialIcons name="publish" size={20} color="white" />
                   <Text className="text-white text-lg font-bold ml-2">Publish Guide</Text>
                 </View>
               )}
             </TouchableOpacity>
-          </View>
-
-          {/* Form Status Indicator */}
-          {(gameTitle || achievementName || content || imageUri) && (
-            <View className="mb-4 p-3 bg-steam-light/50 rounded-xl">
-              <Text className="text-steam-gray text-sm">
-                <MaterialIcons name="edit" size={14} color="#66c0f4" /> 
-                <Text className="ml-2">Form has unsaved changes</Text>
-              </Text>
-            </View>
-          )}
-
-          {/* Database Statistics */}
-          <View className="mt-6 p-4 bg-steam-light rounded-xl">
-            <View className="flex-row items-center mb-3">
-              <MaterialIcons name="storage" size={24} color="#66c0f4" />
-              <Text className="text-white font-bold ml-2">Community Database</Text>
-            </View>
-            
-            <View className="space-y-2">
-              <View className="flex-row justify-between">
-                <Text className="text-steam-gray">Unique Games:</Text>
-                <Text className="text-steam-accent font-bold">{allGameTitles.length}</Text>
-              </View>
-              
-              <View className="flex-row justify-between">
-                <Text className="text-steam-gray">Your Contribution:</Text>
-                <Text className="text-green-400 font-bold">
-                  {allGameTitles.includes(gameTitle.trim()) ? 'Using existing game' : 'Adding new game'}
-                </Text>
-              </View>
-              
-              {!allGameTitles.includes(gameTitle.trim()) && gameTitle.trim().length > 0 && (
-                <View className="mt-3 p-2 bg-blue-500/10 rounded-lg border border-blue-500/30">
-                  <Text className="text-blue-400 text-xs">
-                    <MaterialIcons name="add-circle" size={14} color="#3B82F6" /> 
-                    <Text className="ml-1">
-                      You're adding "{gameTitle.trim()}" as a new game to our database!
-                    </Text>
-                  </Text>
-                </View>
-              )}
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

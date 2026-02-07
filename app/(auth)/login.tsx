@@ -7,19 +7,21 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Image
 } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Login = () => {
   const router = useRouter();
   const { login } = useAuth();
-  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -39,70 +41,87 @@ const Login = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View className="flex-1 justify-center items-center bg-steam-blue p-6">
-        <View className="w-full max-w-md bg-steam-light/80 backdrop-blur-md rounded-2xl p-8 shadow-lg">
-          <Text className="text-3xl font-bold mb-2 text-center text-steam-accent">
-            SteamQuest
-          </Text>
-          <Text className="text-lg mb-6 text-center text-steam-gray">
-            Your Community Achievement Guide
+      <View className="flex-1 justify-center items-center bg-steam-blue px-6">
+        {/* Decorative background elements could go here */}
+        
+        <View className="w-full max-w-md bg-steam-light/90 border border-steam-accent/10 rounded-3xl p-8 shadow-2xl shadow-black">
+          <View className="items-center mb-8">
+            <View className="w-16 h-16 bg-steam-blue rounded-full items-center justify-center mb-4 border border-steam-accent/30">
+               <MaterialIcons name="gamepad" size={32} color="#66c0f4" />
+            </View>
+            <Text className="text-3xl font-bold text-white tracking-wider">
+              SteamQuest
+            </Text>
+            <Text className="text-steam-gray mt-2 text-center">
+              Your Community Achievement Guide
+            </Text>
+          </View>
+          
+          <Text className="text-xl font-bold mb-6 text-white self-start ml-1">
+            Welcome Back
           </Text>
           
-          <Text className="text-xl font-bold mb-6 text-center text-white">
-            Login
-          </Text>
-          
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#8b9cb3"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            className="border border-steam-accent/30 bg-steam-blue p-4 mb-4 rounded-xl text-white"
-          />
-          
-          <TextInput
-            placeholder="Password"
-            placeholderTextColor="#8b9cb3"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            className="border border-steam-accent/30 bg-steam-blue p-4 mb-6 rounded-xl text-white"
-          />
+          <View className="space-y-4">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+              <MaterialIcons name="email" size={20} color="#8b9cb3" />
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="#8b9cb3"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                className="flex-1 ml-3 text-white text-base"
+              />
+            </View>
+            
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-2">
+              <MaterialIcons name="lock" size={20} color="#8b9cb3" />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="#8b9cb3"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                className="flex-1 ml-3 text-white text-base"
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={20} color="#8b9cb3" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => router.push('../reset-password')}
+            className="self-end mb-8 mt-2"
+            disabled={loading}
+          >
+            <Text className="text-steam-accent text-sm font-medium">
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
           
           <Pressable
-            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} px-6 py-4 rounded-2xl`}
+            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
             onPress={handleLogin}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text className="text-white text-lg text-center font-semibold">Login</Text>
+              <Text className="text-white text-lg text-center font-bold tracking-wide">Login</Text>
             )}
           </Pressable>
           
-          {/* Forgot Password Link */}
-          <TouchableOpacity
-            onPress={() => router.push('../reset-password')}
-            className="mt-4"
-            disabled={loading}
-          >
-            <Text className="text-steam-accent text-center font-semibold">
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
-          
-          <View className="flex-row justify-center mt-6">
-            <Text className="text-steam-gray">Don't have an account? </Text>
+          <View className="flex-row justify-center mt-8">
+            <Text className="text-steam-gray">New to SteamQuest? </Text>
             <TouchableOpacity
               onPress={() => {
                 router.push('/register');
               }}
               disabled={loading}
             >
-              <Text className="text-steam-accent font-semibold">Register</Text>
+              <Text className="text-steam-accent font-bold">Create Account</Text>
             </TouchableOpacity>
           </View>
         </View>

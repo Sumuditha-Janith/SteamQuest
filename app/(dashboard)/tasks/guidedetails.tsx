@@ -18,23 +18,18 @@ import { guideService, Guide } from '../../../services/guideService';
 import { useAuth } from '../../../context/AuthContext';
 import VoteButtons from '../../../components/VoteButtons';
 import CommentSection from '../../../components/CommentSection';
-import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg';
 
 const GuideDetailScreen = () => {
-  const navigation = useNavigation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const [guide, setGuide] = useState<Guide | null>(null);
   const [loading, setLoading] = useState(true);
-  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    if (id) {
-      fetchGuide();
-    }
+    if (id) fetchGuide();
   }, [id]);
 
   const fetchGuide = async () => {
@@ -42,214 +37,110 @@ const GuideDetailScreen = () => {
       setLoading(true);
       const fetchedGuide = await guideService.getGuideById(id);
       setGuide(fetchedGuide);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load guide details.');
-      console.error('Error fetching guide:', error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { Alert.alert('Error', 'Failed to load guide details.'); } finally { setLoading(false); }
   };
 
   const handleShare = async () => {
     if (!guide) return;
-    
     try {
       await Share.share({
-        message: `Check out this achievement guide for ${guide.gameTitle}: ${guide.achievementName}\n\n${guide.content}`,
-        title: `${guide.gameTitle} - ${guide.achievementName}`,
+        message: `SteamQuest Guide: ${guide.gameTitle} - ${guide.achievementName}\n\n${guide.content.substring(0, 100)}...`,
+        title: `${guide.gameTitle} Guide`,
       });
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
-
-  const handleVoteUpdate = (updatedGuide: Guide) => {
-    setGuide(updatedGuide);
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy': return '#10B981';
-      case 'Medium': return '#F59E0B';
-      case 'Hard': return '#EF4444';
-      case 'Very Hard': return '#7C3AED';
-      default: return '#6B7280';
-    }
+    } catch (error) { console.error(error); }
   };
 
   if (loading) {
     return (
       <SafeAreaView className="flex-1 bg-steam-blue justify-center items-center">
         <ActivityIndicator size="large" color="#66c0f4" />
-        <Text className="text-steam-accent mt-4">Loading guide...</Text>
       </SafeAreaView>
     );
   }
 
-  if (!guide) {
-    return (
-      <SafeAreaView className="flex-1 bg-steam-blue justify-center items-center p-4">
-        <MaterialIcons name="error" size={80} color="#EF4444" />
-        <Text className="text-white text-xl font-bold mt-4">Guide Not Found</Text>
-        <Text className="text-steam-gray text-center mt-2">
-          The guide you're looking for doesn't exist or has been removed.
-        </Text>
-        <TouchableOpacity
-          className="bg-steam-accent px-6 py-3 rounded-xl mt-4"
-          onPress={() => router.back()}
-        >
-          <Text className="text-white font-bold">Go Back</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
-  }
+  if (!guide) return null;
 
   return (
-    <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
-        {/* Header with back button */}
-        <View className="p-4 flex-row justify-between items-center">
-          <TouchableOpacity onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleShare}>
-            <MaterialIcons name="share" size={24} color="#66c0f4" />
-          </TouchableOpacity>
+    <View className="flex-1 bg-steam-blue">
+      {/* Custom Header Bar */}
+      <SafeAreaView edges={['top']} className="absolute top-0 w-full z-10 flex-row justify-between p-4">
+        <TouchableOpacity onPress={() => router.back()} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
+            <MaterialIcons name="arrow-back" size={24} color="#white" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleShare} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
+            <MaterialIcons name="share" size={24} color="#white" />
+        </TouchableOpacity>
+      </SafeAreaView>
+
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Hero Image Section */}
+        <View className="h-72 w-full relative">
+            <Image 
+                source={{ uri: guide.imageUrl && guide.imageUrl !== DEFAULT_IMAGE_URL ? guide.imageUrl : DEFAULT_IMAGE_URL }}
+                className="w-full h-full"
+                resizeMode="cover"
+            />
+            <View className="absolute inset-0 bg-black/40" />
+            <View className="absolute bottom-0 w-full bg-gradient-to-t from-steam-blue to-transparent h-32" />
+            
+            <View className="absolute bottom-6 left-4 right-4">
+                <View className="flex-row items-center mb-2 space-x-2">
+                    <View className="bg-steam-accent/80 px-2 py-1 rounded text-xs">
+                        <Text className="text-white text-xs font-bold uppercase">{guide.platform?.[0] || 'PC'}</Text>
+                    </View>
+                    <View className="bg-black/50 px-2 py-1 rounded">
+                         <Text className="text-white text-xs font-bold">{guide.difficulty}</Text>
+                    </View>
+                </View>
+                <Text className="text-3xl font-extrabold text-white shadow-lg">{guide.achievementName}</Text>
+                <Text className="text-steam-accent text-lg font-bold shadow-lg">{guide.gameTitle}</Text>
+            </View>
         </View>
 
-        {/* Main ScrollView for the entire page */}
-        <ScrollView
-          ref={scrollViewRef}
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="p-4">
-            {/* Game and Achievement */}
-            <Text className="text-2xl font-bold text-white mb-2">
-              {guide.gameTitle}
-            </Text>
-            <Text className="text-steam-accent text-xl font-semibold mb-4">
-              {guide.achievementName}
-            </Text>
-
-            {/* Difficulty and Platform */}
-            <View className="flex-row flex-wrap items-center mb-6">
-              <View 
-                className="px-3 py-1 rounded-full mr-2 mb-2"
-                style={{ backgroundColor: getDifficultyColor(guide.difficulty) }}
-              >
-                <Text className="text-white font-bold">
-                  {guide.difficulty}
-                </Text>
-              </View>
-              
-              {guide.platform?.map((platform) => (
-                <View key={platform} className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
-                  <Text className="text-steam-gray">{platform}</Text>
-                </View>
-              ))}
-              
-              {guide.estimatedTime && (
-                <View className="px-3 py-1 bg-steam-light rounded-full mr-2 mb-2">
-                  <MaterialIcons name="access-time" size={14} color="#66c0f4" />
-                  <Text className="text-steam-accent ml-1">{guide.estimatedTime}</Text>
-                </View>
-              )}
-            </View>
-
-            {/* Screenshot Display */}
-            {guide.imageUrl && guide.imageUrl !== DEFAULT_IMAGE_URL ? (
-              <View className="mb-6">
-                <Text className="text-white font-bold mb-2">Screenshot</Text>
-                <Image 
-                  source={{ uri: guide.imageUrl }}
-                  className="w-full h-48 rounded-xl"
-                  resizeMode="cover"
-                />
-              </View>
-            ) : (
-              <View className="mb-6 bg-steam-light rounded-xl p-4">
+        {/* Content Body */}
+        <View className="px-5 pb-10">
+            {/* Meta Data Row */}
+            <View className="flex-row items-center justify-between mb-6 border-b border-steam-light/30 pb-4">
                 <View className="flex-row items-center">
-                  <MaterialIcons name="image-not-supported" size={24} color="#66c0f4" />
-                  <Text className="text-steam-accent ml-2 font-bold">No Screenshot Available</Text>
+                    <View className="w-10 h-10 bg-steam-light rounded-full items-center justify-center mr-3">
+                        <Text className="text-white font-bold text-lg">{guide.authorName?.charAt(0)}</Text>
+                    </View>
+                    <View>
+                        <Text className="text-white font-semibold">By {guide.authorName}</Text>
+                        <Text className="text-steam-gray text-xs">{new Date(guide.createdAt).toLocaleDateString()}</Text>
+                    </View>
                 </View>
-                <Text className="text-steam-gray text-sm mt-1">
-                  This guide doesn't include a screenshot. The guide content provides all necessary information.
-                </Text>
-              </View>
-            )}
-
-            {/* Author Info */}
-            <View className="bg-steam-light rounded-xl p-4 mb-6">
-              <View className="flex-row items-center mb-2">
-                <MaterialIcons name="person" size={20} color="#66c0f4" />
-                <Text className="text-steam-accent ml-2 font-bold">
-                  {guide.authorName}
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <MaterialIcons name="calendar-today" size={20} color="#8b9cb3" />
-                <Text className="text-steam-gray ml-2">
-                  Posted on {new Date(guide.createdAt).toLocaleDateString()}
-                </Text>
-              </View>
-              {guide.updatedAt && (
-                <View className="flex-row items-center mt-1">
-                  <MaterialIcons name="update" size={20} color="#8b9cb3" />
-                  <Text className="text-steam-gray ml-2">
-                    Updated on {new Date(guide.updatedAt).toLocaleDateString()}
-                  </Text>
-                </View>
-              )}
+                {guide.estimatedTime && (
+                    <View className="items-end">
+                        <Text className="text-steam-gray text-xs">Est. Time</Text>
+                        <Text className="text-white font-semibold">{guide.estimatedTime}</Text>
+                    </View>
+                )}
             </View>
 
-            {/* Voting Section */}
-            {guide && (
-              <VoteButtons 
-                guide={guide} 
-                onVoteUpdate={handleVoteUpdate}
-              />
-            )}
-
-            {/* Guide Content */}
-            <View className="mb-8">
-              <Text className="text-white text-lg font-bold mb-4">Guide Steps</Text>
-              <View className="bg-steam-light rounded-xl p-4">
-                <Text className="text-white leading-6">
-                  {guide.content}
-                </Text>
-              </View>
+            {/* Voting */}
+            <View className="mb-6 flex-row justify-between items-center">
+                 <VoteButtons guide={guide} onVoteUpdate={setGuide} />
+                 {user?.uid === guide.authorId && (
+                     <TouchableOpacity 
+                        onPress={() => router.push({ pathname: '/(dashboard)/tasks/edit', params: { id: guide.id } } as any)}
+                        className="bg-steam-light p-2 rounded-lg border border-steam-light/50"
+                     >
+                        <MaterialIcons name="edit" size={20} color="#66c0f4" />
+                     </TouchableOpacity>
+                 )}
             </View>
 
-            {/* Tips Section */}
-            <View className="mb-8">
-              <Text className="text-white text-lg font-bold mb-4 flex-row items-center">
-                <MaterialIcons name="lightbulb" size={20} color="#F59E0B" />
-                <Text className="ml-2">Pro Tips</Text>
-              </Text>
-              <View className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
-                <Text className="text-yellow-300">
-                  • Make sure to save your game before attempting difficult sections{'\n'}
-                  • Some achievements may require specific character builds or items{'\n'}
-                  • Check for any time-sensitive requirements{'\n'}
-                  • Consider playing on easier difficulties if available
-                </Text>
-              </View>
+            {/* Main Content */}
+            <View className="bg-steam-light/30 rounded-2xl p-5 mb-8 border border-steam-light/20">
+                <Text className="text-white text-lg leading-8">{guide.content}</Text>
             </View>
 
-            {/* Comment Section */}
-            <View className="mb-8">
-              <CommentSection guideId={guide.id} />
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            {/* Comments */}
+            <CommentSection guideId={guide.id} />
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
