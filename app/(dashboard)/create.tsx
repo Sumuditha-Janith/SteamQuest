@@ -28,7 +28,7 @@ const CreateScreen = () => {
     difficulty: 'Medium' as 'Easy' | 'Medium' | 'Hard' | 'Very Hard',
     content: '',
     imageUri: null as string | null,
-    estimatedTime: '',
+    estimatedTime: { value: '', unit: 'Minutes' as 'Minutes' | 'Hours' },
     platforms: ['PC' as string],
   };
   
@@ -49,6 +49,7 @@ const CreateScreen = () => {
   } = formState;
 
   const difficulties: ('Easy' | 'Medium' | 'Hard' | 'Very Hard')[] = ['Easy', 'Medium', 'Hard', 'Very Hard'];
+  const timeUnits = ['Minutes', 'Hours'];
 
   useEffect(() => {
     loadExistingGameTitles();
@@ -136,6 +137,13 @@ const CreateScreen = () => {
       Alert.alert('Authentication Required', 'You need to be logged in to create a guide.');
       return;
     }
+    
+    // Validate estimated time if value is provided
+    if (estimatedTime.value && isNaN(parseInt(estimatedTime.value))) {
+      Alert.alert('Invalid Time', 'Please enter a valid number for estimated time.');
+      return;
+    }
+    
     try {
       const existingGuides = await guideService.getAllGuides();
       const duplicateExists = existingGuides.some(
@@ -170,7 +178,7 @@ const CreateScreen = () => {
         difficulty,
         authorId: user!.uid,
         authorName: user!.displayName || user!.email?.split('@')[0] || 'Anonymous',
-        estimatedTime: estimatedTime.trim() || undefined,
+        estimatedTime: estimatedTime.value ? `${estimatedTime.value} ${estimatedTime.unit}` : undefined,
         platform: platforms,
       };
       await guideService.addGuide(guideData, imageUri || undefined);
@@ -206,9 +214,30 @@ const CreateScreen = () => {
   const updateFormField = (field: keyof typeof initialFormState, value: any) => {
     if (field === 'gameTitle') {
       updateGameTitle(value);
+    } else if (field === 'estimatedTime') {
+      // Handle estimatedTime update specially if it's a nested object
+      if (typeof value === 'object') {
+        setFormState(prev => ({ ...prev, estimatedTime: { ...prev.estimatedTime, ...value } }));
+      }
     } else {
       setFormState(prev => ({ ...prev, [field]: value }));
     }
+  };
+
+  const updateEstimatedTimeValue = (text: string) => {
+    // Only allow numbers
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setFormState(prev => ({ 
+      ...prev, 
+      estimatedTime: { ...prev.estimatedTime, value: numericValue } 
+    }));
+  };
+
+  const updateEstimatedTimeUnit = (unit: 'Minutes' | 'Hours') => {
+    setFormState(prev => ({ 
+      ...prev, 
+      estimatedTime: { ...prev.estimatedTime, unit } 
+    }));
   };
 
   return (
@@ -301,13 +330,34 @@ const CreateScreen = () => {
           {/* Estimated Time */}
           <View className="mb-5">
             <Text className="text-white font-semibold mb-2 ml-1">Estimated Time</Text>
-            <TextInput
-              placeholder="e.g., 2-3 hours"
-              placeholderTextColor="#8b9cb3"
-              value={estimatedTime}
-              onChangeText={(value) => updateFormField('estimatedTime', value)}
-              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
-            />
+            <View className="flex-row items-center space-x-3">
+              <View className="flex-1">
+                <TextInput
+                  placeholder="e.g., 25"
+                  placeholderTextColor="#8b9cb3"
+                  value={estimatedTime.value}
+                  onChangeText={updateEstimatedTimeValue}
+                  keyboardType="numeric"
+                  className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
+                />
+              </View>
+              <View className="flex-row">
+                {timeUnits.map((unit) => (
+                  <TouchableOpacity
+                    key={unit}
+                    onPress={() => updateEstimatedTimeUnit(unit as 'Minutes' | 'Hours')}
+                    className={`px-4 py-3 rounded-full border ml-2 ${
+                      estimatedTime.unit === unit ? 'bg-steam-accent border-steam-accent' : 'bg-steam-light border-steam-light'
+                    }`}
+                  >
+                    <Text className={estimatedTime.unit === unit ? 'text-white font-semibold' : 'text-steam-gray'}>{unit}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <Text className="text-steam-gray text-xs mt-1 ml-1">
+              Leave empty if not applicable
+            </Text>
           </View>
 
           {/* Image Upload */}
