@@ -238,7 +238,7 @@ const SettingsScreen = () => {
             )}
           </View>
 
-          {/* Additional Settings Section */}
+          {/* Additional Stuff Section */}
           <View className="bg-steam-light rounded-2xl p-5 mb-6">
             <Text className="text-white font-bold text-lg mb-4">
               Miscellaneous
@@ -274,20 +274,19 @@ const SettingsScreen = () => {
               <MaterialIcons name="chevron-right" size={20} color="#8b9cb3" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue"
-              onPress={() => {
-                Alert.alert('Coming Soon', 'Privacy settings will be available soon!');
-              }}
-            >
-              <View className="flex-row items-center">
-                <MaterialIcons name="privacy-tip" size={20} color="#66c0f4" />
-                <Text className="text-white ml-3 font-medium">
-                  Privacy Policy
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={20} color="#8b9cb3" />
-            </TouchableOpacity>
+            {/* Privacy Policy Button */}
+<TouchableOpacity
+  className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue mb-3"
+  onPress={() => router.push('/(dashboard)/tasks/privacy')}
+>
+  <View className="flex-row items-center">
+    <MaterialIcons name="policy" size={20} color="#66c0f4" />
+    <Text className="text-white ml-3 font-medium">
+      Privacy Policy
+    </Text>
+  </View>
+  <MaterialIcons name="chevron-right" size={20} color="#8b9cb3" />
+</TouchableOpacity>
           </View>
 
           {/* Logout Button */}

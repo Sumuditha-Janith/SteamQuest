@@ -48,6 +48,12 @@ const TasksLayout = () => {
           header: () => <CustomHeader title="Account Settings" />,
         }} 
       />
+      <Stack.Screen 
+        name="privacy" 
+        options={{ 
+          header: () => <CustomHeader title="Privacy Policy" />,
+        }} 
+      />
     </Stack>
   );
 };
