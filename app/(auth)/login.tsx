@@ -32,13 +32,13 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
+    
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View className="flex-1 justify-center items-center bg-steam-blue px-6">

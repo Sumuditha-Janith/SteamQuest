@@ -66,7 +66,6 @@ const ProfileScreen = () => {
             await guideService.deleteGuide(guideId);
             setUserGuides(prev => prev.filter(guide => guide.id !== guideId));
           
-            // Show success alert after deletion
             Alert.alert(
               'Success', 
               'Guide deleted successfully!',

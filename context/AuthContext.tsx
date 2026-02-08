@@ -9,20 +9,24 @@ import {
   updatePassword,
   sendPasswordResetEmail,
   EmailAuthProvider,
-  reauthenticateWithCredential
+  reauthenticateWithCredential,
+  sendEmailVerification
 } from 'firebase/auth';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebaseConfig';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, displayName: string) => Promise<void>; // Changed from username to displayName
+  register: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateDisplayName: (displayName: string) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  resendVerification: () => Promise<void>;
+  refreshUser: () => Promise<boolean>;
+  checkAndUpdateVerification: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,8 +48,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        await firebaseUser.reload();
+        const updatedUser = auth.currentUser;
+        
+        if (updatedUser?.emailVerified) {
+          try {
+            const userDocRef = doc(db, 'users', updatedUser.uid);
+            const userDoc = await getDoc(userDocRef);
+            
+            if (userDoc.exists() && !userDoc.data()?.emailVerified) {
+              await updateDoc(userDocRef, {
+                emailVerified: true,
+                verifiedAt: new Date().toISOString()
+              });
+            }
+          } catch (error) {
+            console.error('Error updating verification status:', error);
+          }
+        }
+        
+        setUser(updatedUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -54,9 +81,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      if (!userCredential.user.emailVerified) {
+        await userCredential.user.reload();
+        const currentUser = auth.currentUser;
+        
+        if (currentUser && !currentUser.emailVerified) {
+          await signOut(auth);
+          throw new Error('Please verify your email address before logging in. Check your inbox for the verification email.');
+        }
+      }
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new Error(error.message || 'Invalid email or password');
     }
   };
 
@@ -68,15 +105,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await updateProfile(user, {
         displayName: displayName
       });
-      
+
+      await sendEmailVerification(user);
+
       await setDoc(doc(db, 'users', user.uid), {
         email,
         displayName: displayName,
         createdAt: new Date().toISOString(),
-        uid: user.uid
+        uid: user.uid,
+        emailVerified: false,
+        verificationSentAt: new Date().toISOString()
       });
+      
+      console.log('User registered and verification email sent');
+      
     } catch (error: any) {
-      throw new Error(error.message);
+      console.error('Registration error:', error);
+      
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('This email is already registered. Please try logging in or use a different email.');
+      } else if (error.code === 'auth/weak-password') {
+        throw new Error('Password is too weak. Please use at least 6 characters.');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Invalid email address format.');
+      } else {
+        throw new Error(error.message || 'Registration failed. Please try again.');
+      }
     }
   };
 
@@ -138,6 +192,58 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const resendVerification = async () => {
+    try {
+      if (auth.currentUser && !auth.currentUser.emailVerified) {
+        await sendEmailVerification(auth.currentUser);
+        
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          verificationSentAt: new Date().toISOString()
+        });
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  const refreshUser = async (): Promise<boolean> => {
+    try {
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+        const currentUser = auth.currentUser;
+        setUser({ ...currentUser });
+        return currentUser.emailVerified || false;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+      return false;
+    }
+  };
+
+  const checkAndUpdateVerification = async (): Promise<boolean> => {
+    try {
+      if (!auth.currentUser) return false;
+      
+      await auth.currentUser.reload();
+      const isVerified = auth.currentUser.emailVerified;
+      
+      if (isVerified) {
+        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+          emailVerified: true,
+          verifiedAt: new Date().toISOString()
+        });
+        
+        setUser({ ...auth.currentUser });
+      }
+      
+      return isVerified;
+    } catch (error) {
+      console.error('Error checking verification:', error);
+      return false;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -146,7 +252,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     resetPassword,
     updateDisplayName,
-    changePassword
+    changePassword,
+    resendVerification,
+    refreshUser,
+    checkAndUpdateVerification
   };
 
   return (

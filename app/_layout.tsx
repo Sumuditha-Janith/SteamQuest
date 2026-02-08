@@ -16,17 +16,28 @@ function AuthRouting() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
-    
-    if (!user && !inAuthGroup) {
-      router.replace('/(auth)/login');
-    } else if (user && inAuthGroup) {
-      router.replace('/(dashboard)/home');
+    const onVerifyScreen = segments[1] === 'verify';
+
+    if (!user) {
+      if (!inAuthGroup) {
+        router.replace('/(auth)/login');
+      }
+    } else {
+      if (!user.emailVerified) {
+        if (!onVerifyScreen) {
+          router.replace('/(auth)/verify');
+        }
+      } else {
+        if (inAuthGroup && !onVerifyScreen) {
+          router.replace('/(dashboard)/home');
+        }
+      }
     }
   }, [user, loading, segments]);
 
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }} />
     </>
   );

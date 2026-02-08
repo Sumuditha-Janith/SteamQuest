@@ -60,7 +60,6 @@ const EditScreen = () => {
       setContent(fetchedGuide.content);
       setImageUri(fetchedGuide.imageUrl || null);
       
-      // Parse estimated time string into value and unit
       if (fetchedGuide.estimatedTime) {
         const parts = fetchedGuide.estimatedTime.split(' ');
         if (parts.length === 2) {
