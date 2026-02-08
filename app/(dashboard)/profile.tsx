@@ -97,7 +97,7 @@ const ProfileScreen = () => {
         
         <View className="flex-row space-x-3 w-full justify-center">
             <TouchableOpacity
-              onPress={() => router.push('/(dashboard)/tasks/settings')}
+              onPress={() => router.replace('/(dashboard)/tasks/settings')}
               className="bg-steam-blue/50 px-5 py-2 rounded-full flex-row items-center border border-steam-blue"
             >
               <MaterialIcons name="settings" size={16} color="#c7d5e0" />

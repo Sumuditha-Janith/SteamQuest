@@ -91,7 +91,6 @@ const EditScreen = () => {
       return;
     }
     
-    // Validate estimated time if value is provided
     if (estimatedTime.value && isNaN(parseInt(estimatedTime.value))) {
       Alert.alert('Invalid Time', 'Please enter a valid number for estimated time.');
       return;
@@ -109,7 +108,7 @@ const EditScreen = () => {
       };
       const newImageUri = imageUri === guide?.imageUrl ? undefined : imageUri || undefined;
       await guideService.updateGuide(guide!.id, updateData, newImageUri);
-      Alert.alert('Success', 'Guide updated.', [{ text: 'OK', onPress: () => router.push('/(dashboard)/home') }]);
+      Alert.alert('Success', 'Guide updated.', [{ text: 'OK', onPress: () => router.replace('/(dashboard)/home') }]);
     } catch (error) { Alert.alert('Error', 'Failed to update.'); } finally { setUpdating(false); }
   };
 
