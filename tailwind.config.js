@@ -10,9 +10,9 @@ module.exports = {
     extend: {
       colors: {
         steam: {
-          blue: '#1b2838',
-          accent: '#66c0f4',
-          light: '#2a475e',
+          blue: '#1b2838', 
+          accent: '#66c0f4', 
+          light: '#2a475e', 
           gray: '#c7d5e0'
         }
       }

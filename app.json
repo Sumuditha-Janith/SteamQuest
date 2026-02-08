@@ -36,7 +36,7 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true 
     }
   }
 }
