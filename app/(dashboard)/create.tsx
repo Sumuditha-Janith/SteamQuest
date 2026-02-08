@@ -138,7 +138,6 @@ const CreateScreen = () => {
       return;
     }
     
-    // Validate estimated time if value is provided
     if (estimatedTime.value && isNaN(parseInt(estimatedTime.value))) {
       Alert.alert('Invalid Time', 'Please enter a valid number for estimated time.');
       return;
@@ -215,7 +214,6 @@ const CreateScreen = () => {
     if (field === 'gameTitle') {
       updateGameTitle(value);
     } else if (field === 'estimatedTime') {
-      // Handle estimatedTime update specially if it's a nested object
       if (typeof value === 'object') {
         setFormState(prev => ({ ...prev, estimatedTime: { ...prev.estimatedTime, ...value } }));
       }
@@ -225,7 +223,6 @@ const CreateScreen = () => {
   };
 
   const updateEstimatedTimeValue = (text: string) => {
-    // Only allow numbers
     const numericValue = text.replace(/[^0-9]/g, '');
     setFormState(prev => ({ 
       ...prev, 

@@ -55,7 +55,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
       className="bg-steam-light rounded-2xl mb-5 overflow-hidden shadow-md shadow-black/40 border border-steam-light/50"
     >
       <View className="h-44 w-full bg-steam-blue relative">
-          {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/Jw3yBsPq/og-EGSpic.jpg' ? (
+          {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/8nHp9Z0V/steamquestdark.jpg' ? (
             <Image 
               source={{ uri: guide.imageUrl }}
               className="w-full h-full"

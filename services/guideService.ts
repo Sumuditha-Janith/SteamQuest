@@ -59,7 +59,7 @@ export interface CreateGuideData {
 }
 
 const IMGBB_API_KEY = '0aec13a2f49dfb974fe7b5ac4a86ae2b';
-const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg'
+const DEFAULT_IMAGE_URL = 'https://i.ibb.co/1fbk6MWw/steamquestdefault.jpg'
 
 export const guideService = {
   async uploadImageToImgBB(imageUri: string): Promise<string> {

@@ -51,7 +51,6 @@ const DashboardLayout = () => {
           ),
         }}
       />
-      {/* Hide the tasks tab from the tab bar */}
       <Tabs.Screen
         name="tasks"
         options={{

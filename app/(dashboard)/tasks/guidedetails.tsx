@@ -19,7 +19,7 @@ import { useAuth } from '../../../context/AuthContext';
 import VoteButtons from '../../../components/VoteButtons';
 import CommentSection from '../../../components/CommentSection';
 
-const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg';
+const DEFAULT_IMAGE_URL = 'https://i.ibb.co/1fbk6MWw/steamquestdefault.jpg';
 
 const GuideDetailScreen = () => {
   const router = useRouter();

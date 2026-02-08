@@ -67,7 +67,6 @@ const Register = () => {
           { 
             text: 'OK', 
             onPress: () => {
-              // Navigate to verify screen
               router.replace('/(auth)/verify');
             }
           }
