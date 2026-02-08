@@ -275,18 +275,18 @@ const SettingsScreen = () => {
             </TouchableOpacity>
 
             {/* Privacy Policy Button */}
-<TouchableOpacity
-  className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue mb-3"
-  onPress={() => router.push('/(dashboard)/tasks/privacy')}
->
-  <View className="flex-row items-center">
-    <MaterialIcons name="policy" size={20} color="#66c0f4" />
-    <Text className="text-white ml-3 font-medium">
-      Privacy Policy
-    </Text>
-  </View>
-  <MaterialIcons name="chevron-right" size={20} color="#8b9cb3" />
-</TouchableOpacity>
+            <TouchableOpacity
+              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue mb-3"
+              onPress={() => router.push('/(dashboard)/tasks/privacy')}
+            >
+              <View className="flex-row items-center">
+                <MaterialIcons name="policy" size={20} color="#66c0f4" />
+                <Text className="text-white ml-3 font-medium">
+                  Privacy Policy
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={20} color="#8b9cb3" />
+            </TouchableOpacity>
           </View>
 
           {/* Logout Button */}
