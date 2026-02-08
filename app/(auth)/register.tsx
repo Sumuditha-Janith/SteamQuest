@@ -63,12 +63,15 @@ const Register = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View className="flex-1 justify-center items-center bg-steam-blue px-6">
         <View className="w-full max-w-md bg-steam-light/90 border border-steam-accent/10 rounded-3xl p-8 shadow-2xl shadow-black">
-          <View className="items-center mb-6">
+          <View className="items-center mb-8">
+            <View className="w-16 h-16 bg-steam-blue rounded-full items-center justify-center mb-4 border border-steam-accent/30">
+            <MaterialIcons name="workspace-premium" size={32} color="#66c0f4" />
+            </View>
             <Text className="text-3xl font-bold text-white tracking-wider">
               SteamQuest
             </Text>
             <Text className="text-steam-gray mt-2 text-center">
-              Join the Achievement Hunter Community
+              Your Community Achievement Guide
             </Text>
           </View>
           

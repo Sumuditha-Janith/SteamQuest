@@ -55,7 +55,7 @@ const DashboardLayout = () => {
       <Tabs.Screen
         name="tasks"
         options={{
-          href: null, // This hides the tab from the tab bar
+          href: null,
         }}
       />
     </Tabs>

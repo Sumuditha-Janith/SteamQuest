@@ -42,12 +42,11 @@ const Login = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View className="flex-1 justify-center items-center bg-steam-blue px-6">
-        {/* Decorative background elements could go here */}
         
         <View className="w-full max-w-md bg-steam-light/90 border border-steam-accent/10 rounded-3xl p-8 shadow-2xl shadow-black">
           <View className="items-center mb-8">
             <View className="w-16 h-16 bg-steam-blue rounded-full items-center justify-center mb-4 border border-steam-accent/30">
-               <MaterialIcons name="gamepad" size={32} color="#66c0f4" />
+               <MaterialIcons name="workspace-premium" size={32} color="#66c0f4" />
             </View>
             <Text className="text-3xl font-bold text-white tracking-wider">
               SteamQuest
@@ -57,12 +56,12 @@ const Login = () => {
             </Text>
           </View>
           
-          <Text className="text-xl font-bold mb-6 text-white self-start ml-1">
+          <Text className="text-xl font-bold mb-6 text-white text-center">
             Welcome Back
           </Text>
           
           <View className="space-y-4">
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-1">
               <MaterialIcons name="email" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Email"
@@ -90,16 +89,6 @@ const Login = () => {
               </TouchableOpacity>
             </View>
           </View>
-
-          <TouchableOpacity
-            onPress={() => router.push('../reset-password')}
-            className="self-end mb-8 mt-2"
-            disabled={loading}
-          >
-            <Text className="text-steam-accent text-sm font-medium">
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
           
           <Pressable
             className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
@@ -112,8 +101,18 @@ const Login = () => {
               <Text className="text-white text-lg text-center font-bold tracking-wide">Login</Text>
             )}
           </Pressable>
-          
-          <View className="flex-row justify-center mt-8">
+
+          <TouchableOpacity
+            onPress={() => router.push('../reset-password')}
+            className="self-end mb-8 mt-2"
+            disabled={loading}
+          >
+            <Text className="text-steam-accent text-sm font-medium mt-2">
+              Forgot Password?
+            </Text>
+          </TouchableOpacity>
+
+          <View className="flex-row justify-center -mt-6">
             <Text className="text-steam-gray">New to SteamQuest? </Text>
             <TouchableOpacity
               onPress={() => {

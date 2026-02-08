@@ -17,8 +17,6 @@ import { guideService, Guide } from '../../services/guideService';
 import GuideCard from '../../components/GuideCard';
 import { router, useRouter } from 'expo-router';
 
-// --- Sub-Components defined OUTSIDE to prevent re-renders ---
-
 const SearchBar = React.memo(({
   searchQuery,
   setSearchQuery,

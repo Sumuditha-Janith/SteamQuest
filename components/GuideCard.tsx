@@ -39,7 +39,6 @@ const GuideCard: React.FC<GuideCardProps> = ({
   };
 
   const diffStyle = getDifficultyColor(guide.difficulty);
-  // Extract classes manually since dynamic class names in tailwind sometimes fail in RN if not full strings
   const [bgClass, textClass] = diffStyle.split(' ');
 
   const handlePress = () => {
@@ -94,7 +93,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
              <View className="flex-row items-center">
                  <View className="w-6 h-6 bg-steam-blue rounded-full items-center justify-center mr-2">
                     <Text className="text-[10px] text-white font-bold">
-                        {guide.authorName?.charAt(0).toUpperCase()}
+                        <MaterialIcons name="person" size={16} color="#66c0f4" />
                     </Text>
                  </View>
                  <Text className="text-steam-gray text-xs">{guide.authorName}</Text>

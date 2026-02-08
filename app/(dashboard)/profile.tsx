@@ -76,9 +76,7 @@ const ProfileScreen = () => {
     <View className="mb-6">
       <View className="bg-steam-light items-center pt-8 pb-6 px-4 rounded-b-3xl border-b border-steam-light/50 shadow-xl mb-4">
         <View className="w-24 h-24 bg-gradient-to-br from-steam-accent to-steam-blue rounded-full justify-center items-center mb-4 border-4 border-steam-blue shadow-lg">
-          <Text className="text-white text-4xl font-bold">
-             {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
-          </Text>
+            <MaterialIcons name="person" size={64} color="#66c0f4" />
         </View>
         <Text className="text-white text-2xl font-bold mb-1">
           {user?.displayName || 'Adventurer'}
