@@ -15,7 +15,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 export interface Guide {
   id: string;
@@ -60,6 +60,7 @@ export interface CreateGuideData {
 
 const IMGBB_API_KEY = '0aec13a2f49dfb974fe7b5ac4a86ae2b';
 const DEFAULT_IMAGE_URL = 'https://i.ibb.co/HTq3q83z/steamquestdefault2.jpg'
+
 export const guideService = {
   async uploadImageToImgBB(imageUri: string): Promise<string> {
     try {
