@@ -64,7 +64,7 @@ const GuideDetailScreen = () => {
     <View className="flex-1 bg-steam-blue">
       {/* Custom Header Bar */}
       <SafeAreaView edges={['top']} className="absolute top-0 w-full z-10 flex-row justify-between p-4">
-        <TouchableOpacity onPress={() => router.back()} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
+        <TouchableOpacity onPress={() => router.push('/(dashboard)/home')} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
             <MaterialIcons name="arrow-back" size={24} color="#white" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleShare} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">

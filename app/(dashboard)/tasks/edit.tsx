@@ -87,7 +87,7 @@ const EditScreen = () => {
       };
       const newImageUri = imageUri === guide?.imageUrl ? undefined : imageUri || undefined;
       await guideService.updateGuide(guide!.id, updateData, newImageUri);
-      Alert.alert('Success', 'Guide updated.', [{ text: 'OK', onPress: () => navigation.goBack() }]);
+      Alert.alert('Success', 'Guide updated.', [{ text: 'OK', onPress: () => router.push('/(dashboard)/home') }]);
     } catch (error) { Alert.alert('Error', 'Failed to update.'); } finally { setUpdating(false); }
   };
 
@@ -143,7 +143,7 @@ const EditScreen = () => {
           </View>
 
           <View className="flex-row gap-4 mb-8">
-            <TouchableOpacity onPress={() => navigation.goBack()} className="flex-1 bg-steam-light py-4 rounded-xl items-center">
+            <TouchableOpacity onPress={() => router.push('/(dashboard)/profile')} className="flex-1 bg-steam-light py-4 rounded-xl items-center">
                 <Text className="text-steam-gray font-bold">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleSubmit} disabled={updating} className="flex-1 bg-steam-accent py-4 rounded-xl items-center">

@@ -58,11 +58,23 @@ const ProfileScreen = () => {
   const handleDeleteGuide = (guideId: string) => {
     Alert.alert('Delete Guide', 'This cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: async () => {
+      { 
+        text: 'Delete', 
+        style: 'destructive', 
+        onPress: async () => {
           try {
             await guideService.deleteGuide(guideId);
             setUserGuides(prev => prev.filter(guide => guide.id !== guideId));
-          } catch (error) { Alert.alert('Error', 'Failed to delete guide.'); }
+          
+            // Show success alert after deletion
+            Alert.alert(
+              'Success', 
+              'Guide deleted successfully!',
+              [{ text: 'OK' }]
+            );
+          } catch (error) { 
+            Alert.alert('Error', 'Failed to delete guide.'); 
+          }
         }
       },
     ]);

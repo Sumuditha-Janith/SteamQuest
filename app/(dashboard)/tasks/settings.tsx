@@ -66,7 +66,7 @@ const SettingsScreen = () => {
       <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
         {/* Header */}
         <View className="px-4 py-2 border-b border-steam-light/30 flex-row items-center">
-          <TouchableOpacity onPress={() => router.back()} className="mr-4">
+          <TouchableOpacity onPress={() => router.push('/(dashboard)/home')} className="mr-4">
             <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
           </TouchableOpacity>
           <Text className="text-white text-xl font-bold">Settings</Text>

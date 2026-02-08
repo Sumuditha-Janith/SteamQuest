@@ -106,6 +106,11 @@ const CommunityStats = React.memo(({ guides }: { guides: Guide[] }) => {
           <Text className="text-white font-bold">{stats.Hard}</Text>
           <Text className="text-steam-gray text-[10px]">Hard</Text>
         </View>
+        <View className="items-center">
+          <View className="w-2 h-2 rounded-full bg-purple-400 mb-1" />
+          <Text className="text-white font-bold">{stats['Very Hard']}</Text>
+          <Text className="text-steam-gray text-[10px]">Very H.</Text>
+        </View>
       </View>
     </View>
   );
