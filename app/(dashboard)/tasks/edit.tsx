@@ -24,11 +24,9 @@ const EditScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [guide, setGuide] = useState<Guide | null>(null);
-  
   const [gameTitle, setGameTitle] = useState('');
   const [achievementName, setAchievementName] = useState('');
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard' | 'Very Hard'>('Medium');
@@ -59,7 +57,6 @@ const EditScreen = () => {
       setDifficulty(fetchedGuide.difficulty);
       setContent(fetchedGuide.content);
       setImageUri(fetchedGuide.imageUrl || null);
-      
       if (fetchedGuide.estimatedTime) {
         const parts = fetchedGuide.estimatedTime.split(' ');
         if (parts.length === 2) {
@@ -108,7 +105,8 @@ const EditScreen = () => {
       const newImageUri = imageUri === guide?.imageUrl ? undefined : imageUri || undefined;
       await guideService.updateGuide(guide!.id, updateData, newImageUri);
       Alert.alert('Success', 'Guide updated.', [{ text: 'OK', onPress: () => router.replace('/(dashboard)/home') }]);
-    } catch (error) { Alert.alert('Error', 'Failed to update.'); } finally { setUpdating(false); }
+    } catch (error) { Alert.alert('Error', 'Failed to update.');
+    } finally { setUpdating(false); }
   };
 
   const updateEstimatedTimeValue = (text: string) => {
@@ -132,7 +130,10 @@ const EditScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+        className="flex-1"
+      >
         <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
           <View className="mb-6">
              <Text className="text-2xl font-bold text-white">Edit Guide</Text>
@@ -162,7 +163,7 @@ const EditScreen = () => {
           <View className="mb-4">
             <Text className="text-white font-semibold mb-2 ml-1">Difficulty</Text>
             <View className="flex-row flex-wrap gap-2">
-                {difficulties.map(diff => (
+              {difficulties.map(diff => (
                     <TouchableOpacity 
                       key={diff} 
                       onPress={() => setDifficulty(diff)} 

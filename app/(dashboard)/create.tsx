@@ -21,7 +21,6 @@ import { useRouter } from 'expo-router';
 const CreateScreen = () => {
   const router = useRouter();
   const { user } = useAuth();
-  
   const initialFormState = {
     gameTitle: '',
     achievementName: '',
@@ -150,6 +149,7 @@ const CreateScreen = () => {
           guide.gameTitle.toLowerCase() === gameTitle.trim().toLowerCase() &&
           guide.achievementName.toLowerCase() === achievementName.trim().toLowerCase()
       );
+
       if (duplicateExists) {
         Alert.alert(
           'Duplicate Guide',
@@ -239,7 +239,10 @@ const CreateScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-steam-blue" edges={['top']}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+        className="flex-1"
+      >
         <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <View className="mb-6">
             <Text className="text-2xl font-bold text-white mb-2">Create Guide</Text>
@@ -316,7 +319,7 @@ const CreateScreen = () => {
                   }`}
                 >
                    {platforms.includes(platform) && <MaterialIcons name="check" size={14} color="#66c0f4" style={{marginRight: 4}} />}
-                  <Text className={platforms.includes(platform) ? 'text-steam-accent font-semibold' : 'text-steam-gray'}>
+                   <Text className={platforms.includes(platform) ? 'text-steam-accent font-semibold' : 'text-steam-gray'}>
                     {platform}
                   </Text>
                 </TouchableOpacity>

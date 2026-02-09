@@ -22,9 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.yourcompany.steamquest",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -40,12 +38,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "d30bc1e8-807b-41ad-bbfd-7f4f84060de5"
-      }
     }
   }
 }

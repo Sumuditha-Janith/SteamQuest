@@ -3,6 +3,8 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { useDoublePressBackExit } from '../utils/backHandler';
+import { Platform, AppState } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import '../global.css';
 
 function AuthRouting() {
@@ -11,6 +13,28 @@ function AuthRouting() {
   const router = useRouter();
 
   useDoublePressBackExit();
+
+  useEffect(() => {
+    const configureNavBar = async () => {
+      if (Platform.OS === 'android') {
+        await NavigationBar.setBackgroundColorAsync('#1b2838');
+        await NavigationBar.setButtonStyleAsync('light');
+        await NavigationBar.setPositionAsync('relative'); 
+      }
+    };
+
+    configureNavBar();
+
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        configureNavBar();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (loading) return;
