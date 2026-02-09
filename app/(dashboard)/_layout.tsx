@@ -1,9 +1,14 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DashboardLayout = () => {
+  const insets = useSafeAreaInsets();
+  
+  const tabHeight = 60 + (Platform.OS === 'ios' ? 20 : insets.bottom);
+
   return (
     <Tabs
       screenOptions={{
@@ -12,9 +17,10 @@ const DashboardLayout = () => {
           backgroundColor: '#1b2838',
           borderTopColor: '#2a475e',
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 85 : 70,
-          paddingBottom: Platform.OS === 'ios' ? 25 : 10,
+          height: tabHeight,
+          paddingBottom: Platform.OS === 'ios' ? 20 : insets.bottom, 
           paddingTop: 10,
+          elevation: 0,
         },
         tabBarActiveTintColor: '#66c0f4',
         tabBarInactiveTintColor: '#c7d5e0',
