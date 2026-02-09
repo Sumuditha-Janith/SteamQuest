@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,6 +15,7 @@ const VerifyScreen = () => {
   const { user, refreshUser, resendVerification, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const router = useRouter();
 
   const handleCheckVerification = async () => {
@@ -48,15 +48,33 @@ const VerifyScreen = () => {
     }
   };
 
+  const handleBackToLogin = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+      Alert.alert('Logged Out', 'You have been logged out successfully.', [
+        { 
+          text: 'OK', 
+          onPress: () => router.replace('/(auth)/login')
+        }
+      ]);
+    } catch (error: any) {
+      Alert.alert('Logout Error', error.message || 'Failed to log out. Please try again.');
+      setLoggingOut(false);
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-steam-blue justify-center px-6">
       <View className="bg-steam-light/90 border border-steam-accent/10 rounded-3xl p-8 shadow-2xl shadow-black items-center">
         
         <View className="w-20 h-20 bg-steam-blue rounded-full items-center justify-center mb-6 border border-steam-accent/30">
-           <MaterialIcons name="mark-email-unread" size={40} color="#66c0f4" />
+          <MaterialIcons name="mark-email-unread" size={40} color="#66c0f4" />
         </View>
 
-        <Text className="text-2xl font-bold text-white mb-2 text-center">Verify Your Email</Text>
+        <Text className="text-2xl font-bold text-white mb-2 text-center">
+          Verify Your Email
+        </Text>
         
         <Text className="text-steam-gray text-center mb-6 leading-6">
           We've sent a verification link to:
@@ -68,7 +86,7 @@ const VerifyScreen = () => {
 
         <TouchableOpacity
           onPress={handleCheckVerification}
-          className="w-full bg-steam-accent py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90 mb-4"
+          className="w-60 bg-steam-accent py-3 rounded-full shadow-lg shadow-steam-accent/20 active:opacity-90 mb-4"
           disabled={loading}
         >
           {loading ? (
@@ -91,11 +109,18 @@ const VerifyScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => logout()}
-          className="flex-row items-center bg-steam-blue/50 px-4 py-2 rounded-full border border-steam-blue"
+          onPress={handleBackToLogin}
+          disabled={loggingOut}
+          className="flex-row items-center bg-steam-blue/50 px-4 py-2 rounded-full border border-steam-blue active:opacity-80"
         >
-          <MaterialIcons name="arrow-back" size={16} color="#8b9cb3" />
-          <Text className="text-steam-gray ml-2">Back to Login</Text>
+          {loggingOut ? (
+            <ActivityIndicator size="small" color="#8b9cb3" />
+          ) : (
+            <>
+              <MaterialIcons name="arrow-back" size={16} color="#8b9cb3" />
+              <Text className="text-steam-gray ml-2 font-medium">Back to Login</Text>
+            </>
+          )}
         </TouchableOpacity>
 
       </View>

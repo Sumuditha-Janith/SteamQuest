@@ -95,12 +95,12 @@ const Register = () => {
             </Text>
           </View>
           
-          <Text className="text-xl font-bold mb-6 text-white self-start ml-1">
+          <Text className="text-xl font-bold mb-6 text-white text-center">
             Create Account
           </Text>
           
           <View className="space-y-4 mb-8">
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-4 py-1 mb-1">
               <MaterialIcons name="person" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Display Name"
@@ -108,12 +108,12 @@ const Register = () => {
                 value={displayName}
                 onChangeText={setDisplayName}
                 autoCapitalize="none"
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
                 maxLength={20}
               />
             </View>
 
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-4 py-1 mb-1">
               <MaterialIcons name="email" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Email Address"
@@ -122,11 +122,11 @@ const Register = () => {
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
               />
             </View>
             
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-4 py-1 mb-1">
               <MaterialIcons name="lock" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Password (min. 6 characters)"
@@ -134,7 +134,7 @@ const Register = () => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialIcons 
@@ -145,7 +145,7 @@ const Register = () => {
               </TouchableOpacity>
             </View>
             
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-4 py-1 mb-1">
               <MaterialIcons name="lock-outline" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Confirm Password"
@@ -153,7 +153,7 @@ const Register = () => {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
               />
               <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                 <MaterialIcons 
@@ -164,7 +164,7 @@ const Register = () => {
               </TouchableOpacity>
             </View>
             
-            <View className="bg-steam-blue/30 rounded-lg p-3 mt-2">
+            <View className="bg-steam-blue/30 rounded-2xl p-3 mt-2">
               <Text className="text-steam-gray text-xs">
                 <MaterialIcons name="info" size={12} color="#66c0f4" />{' '}
                 After registering, you'll receive a verification email. You must verify your email to access all features.
@@ -173,7 +173,7 @@ const Register = () => {
           </View>
           
           <Pressable
-            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
+            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-full shadow-lg shadow-steam-accent/20 active:opacity-90`}
             onPress={handleRegister}
             disabled={loading}
           >

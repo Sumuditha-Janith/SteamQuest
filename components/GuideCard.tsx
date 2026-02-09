@@ -52,7 +52,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
     <TouchableOpacity 
       onPress={handlePress}
       activeOpacity={0.9}
-      className="bg-steam-light rounded-2xl mb-5 overflow-hidden shadow-md shadow-black/40 border border-steam-light/50"
+      className="bg-steam-light rounded-3xl mb-5 overflow-hidden shadow-md shadow-black/40 border border-steam-light/50"
     >
       <View className="h-44 w-full bg-steam-blue relative">
           {guide.imageUrl && guide.imageUrl !== 'https://i.ibb.co/8nHp9Z0V/steamquestdark.jpg' ? (
@@ -68,7 +68,7 @@ const GuideCard: React.FC<GuideCardProps> = ({
           )}
           
           {/* Difficulty Badge Overlay */}
-          <View className={`absolute top-3 right-3 px-3 py-1.5 rounded-lg ${bgClass} backdrop-blur-md`}>
+          <View className={`absolute top-3 right-3 px-3 py-1.5 rounded-full ${bgClass} backdrop-blur-md`}>
              <Text className={`text-xs font-bold ${textClass} uppercase tracking-wide`}>
                 {guide.difficulty}
              </Text>
@@ -96,12 +96,12 @@ const GuideCard: React.FC<GuideCardProps> = ({
                         <MaterialIcons name="person" size={16} color="#66c0f4" />
                     </Text>
                  </View>
-                 <Text className="text-steam-gray text-xs">{guide.authorName}</Text>
+                 <Text className="text-steam-gray text-sm">{guide.authorName}</Text>
              </View>
              
              <View className="flex-row items-center space-x-3">
-                 <View className="flex-row items-center bg-steam-blue/30 px-2 py-1 rounded-lg">
-                    <MaterialIcons name="comment" size={14} color="#66c0f4" />
+                 <View className="flex-row items-center mr-1 rounded-xl">
+                    <MaterialIcons name="comment" size={20} color="#66c0f4" />
                     <Text className="text-steam-gray ml-1.5 text-xs font-medium">{guide.commentCount || 0}</Text>
                  </View>
                  <VoteButtons guide={guide} onVoteUpdate={onVoteUpdate || (() => {})} compact />
@@ -111,12 +111,12 @@ const GuideCard: React.FC<GuideCardProps> = ({
         {showActions && (onDelete || onEdit) && (
           <View className="mt-4 pt-3 border-t border-steam-blue/50 flex-row gap-2">
               {onEdit && (
-                <TouchableOpacity onPress={onEdit} className="flex-1 bg-blue-500/10 py-2.5 rounded-xl flex-row justify-center items-center">
+                <TouchableOpacity onPress={onEdit} className="flex-1 bg-blue-500/10 py-2.5 rounded-3xl flex-row justify-center items-center">
                    <Text className="text-blue-400 font-semibold ml-2">Edit</Text>
                 </TouchableOpacity>
               )}
               {onDelete && (
-                <TouchableOpacity onPress={onDelete} className="flex-1 bg-red-500/10 py-2.5 rounded-xl flex-row justify-center items-center">
+                <TouchableOpacity onPress={onDelete} className="flex-1 bg-red-500/10 py-2.5 rounded-3xl flex-row justify-center items-center">
                    <Text className="text-red-400 font-semibold ml-2">Delete</Text>
                 </TouchableOpacity>
               )}

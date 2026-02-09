@@ -140,27 +140,27 @@ const EditScreen = () => {
           </View>
 
           <View className="mb-4">
-            <Text className="text-white font-semibold mb-2">Game Title <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Game Title <Text className="text-red-400">*</Text></Text>
             <TextInput 
               value={gameTitle} 
               onChangeText={setGameTitle} 
-              className="bg-steam-light rounded-xl text-white p-4" 
+              className="bg-steam-light rounded-3xl text-white p-4" 
               placeholderTextColor="#8b9cb3" 
             />
           </View>
 
           <View className="mb-4">
-            <Text className="text-white font-semibold mb-2">Achievement Name <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Achievement Name <Text className="text-red-400">*</Text></Text>
             <TextInput 
               value={achievementName} 
               onChangeText={setAchievementName} 
-              className="bg-steam-light rounded-xl text-white p-4" 
+              className="bg-steam-light rounded-3xl text-white p-4" 
               placeholderTextColor="#8b9cb3" 
             />
           </View>
 
           <View className="mb-4">
-            <Text className="text-white font-semibold mb-2">Difficulty</Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Difficulty</Text>
             <View className="flex-row flex-wrap gap-2">
                 {difficulties.map(diff => (
                     <TouchableOpacity 
@@ -178,7 +178,7 @@ const EditScreen = () => {
 
           {/* Platform */}
           <View className="mb-4">
-            <Text className="text-white font-semibold mb-2">Platform</Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Platform</Text>
             <View className="flex-row flex-wrap gap-2">
               {['PC', 'PlayStation', 'Xbox', 'Switch'].map((platform) => (
                 <TouchableOpacity
@@ -199,7 +199,7 @@ const EditScreen = () => {
 
           {/* Estimated Time */}
           <View className="mb-4">
-            <Text className="text-white font-semibold mb-2">Estimated Time</Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Estimated Time</Text>
             <View className="flex-row items-center space-x-3">
               <View className="flex-1">
                 <TextInput
@@ -208,7 +208,7 @@ const EditScreen = () => {
                   value={estimatedTime.value}
                   onChangeText={updateEstimatedTimeValue}
                   keyboardType="numeric"
-                  className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
+                  className="bg-steam-light border border-steam-light rounded-full text-white p-4 text-base"
                 />
               </View>
               <View className="flex-row">
@@ -225,14 +225,14 @@ const EditScreen = () => {
                 ))}
               </View>
             </View>
-            <Text className="text-steam-gray text-xs mt-1 ml-1">
+            <Text className="text-steam-gray text-xs mt-2 ml-3">
               Leave empty if not applicable
             </Text>
           </View>
 
           <View className="mb-4">
-             <Text className="text-white font-semibold mb-2">Cover Image (Optional)</Text>
-             <TouchableOpacity onPress={handleSelectImage} className="h-40 bg-steam-light rounded-xl overflow-hidden justify-center items-center border border-steam-light/50">
+             <Text className="text-white font-semibold mb-2 ml-1">Cover Image (Optional)</Text>
+             <TouchableOpacity onPress={handleSelectImage} className="h-40 bg-steam-light rounded-3xl overflow-hidden justify-center items-center border border-steam-light/50">
                  {imageUri ? (
                      <Image source={{ uri: imageUri }} className="w-full h-full" resizeMode="cover" />
                  ) : (
@@ -245,12 +245,12 @@ const EditScreen = () => {
           </View>
 
           <View className="mb-8">
-            <Text className="text-white font-semibold mb-2">Guide Instructions <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-1">Guide Instructions <Text className="text-red-400">*</Text></Text>
             <TextInput 
               value={content} 
               onChangeText={setContent} 
               multiline 
-              className="bg-steam-light rounded-xl text-white p-4 min-h-[150px]" 
+              className="bg-steam-light rounded-3xl text-white p-4 min-h-[150px]" 
               textAlignVertical="top" 
               placeholderTextColor="#8b9cb3" 
             />
@@ -259,16 +259,16 @@ const EditScreen = () => {
           <View className="flex-row gap-4 mb-8">
             <TouchableOpacity 
               onPress={() => router.push('/(dashboard)/profile')} 
-              className="flex-1 bg-steam-light py-4 rounded-xl items-center"
+              className="flex-1 bg-steam-light py-4 rounded-full items-center"
             >
                 <Text className="text-steam-gray font-bold">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               onPress={handleSubmit} 
               disabled={updating} 
-              className="flex-1 bg-steam-accent py-4 rounded-xl items-center"
+              className="flex-1 bg-steam-accent py-4 rounded-full items-center"
             >
-                {updating ? <ActivityIndicator color="white"/> : <Text className="text-white font-bold">Save Changes</Text>}
+                {updating ? <ActivityIndicator color="white"/> : <Text className="text-white font-bold">Update Changes</Text>}
             </TouchableOpacity>
           </View>
         </ScrollView>

@@ -71,7 +71,7 @@ const ResetPassword = () => {
             </Text>
           </View>
           
-          <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-8">
+          <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-4 py-1 mb-4">
             <MaterialIcons name="email" size={20} color="#8b9cb3" />
             <TextInput
                 placeholder="Email Address"
@@ -80,7 +80,7 @@ const ResetPassword = () => {
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
                 editable={!emailSent}
             />
           </View>
@@ -90,7 +90,7 @@ const ResetPassword = () => {
             disabled={loading || emailSent}
             className={`${
               loading || emailSent ? 'bg-steam-accent/50' : 'bg-steam-accent'
-            } w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
+            } w-60 py-3 self-center rounded-full shadow-lg shadow-steam-accent/20 active:opacity-90`}
           >
             {loading ? (
               <ActivityIndicator color="white" />

@@ -51,15 +51,15 @@ const VoteButtons: React.FC<VoteButtonsProps> = ({ guide, onVoteUpdate, compact 
   
   if (compact) {
     return (
-      <View className="flex-row items-center bg-steam-blue/30 px-2 py-1 rounded-lg">
+      <View className="flex-row items-center px-2 py-2 rounded-lg">
         <TouchableOpacity onPress={handleUpvote} disabled={!user}>
-          <MaterialIcons name="thumb-up" size={14} color={currentVote === 'upvoted' ? '#10B981' : '#8b9cb3'} />
+          <MaterialIcons name="thumb-up" size={24} color={currentVote === 'upvoted' ? '#10B981' : '#8b9cb3'} />
         </TouchableOpacity>
         <Text className={`mx-2 text-xs font-bold ${currentVote === 'upvoted' ? 'text-green-400' : currentVote === 'downvoted' ? 'text-red-400' : 'text-steam-gray'}`}>
           {netVotes}
         </Text>
         <TouchableOpacity onPress={handleDownvote} disabled={!user}>
-          <MaterialIcons name="thumb-down" size={14} color={currentVote === 'downvoted' ? '#EF4444' : '#8b9cb3'} />
+          <MaterialIcons name="thumb-down" size={24} color={currentVote === 'downvoted' ? '#EF4444' : '#8b9cb3'} />
         </TouchableOpacity>
       </View>
     );

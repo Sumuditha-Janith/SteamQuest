@@ -27,14 +27,14 @@ const SearchBar = React.memo(({
   onClear: () => void,
 }) => {
   return (
-    <View className="bg-steam-light/80 border border-steam-light rounded-xl px-4 py-3 flex-row items-center mb-6 shadow-sm">
+    <View className="bg-steam-light/80 border border-steam-light rounded-full px-5 py-1 flex-row items-center mb-6 shadow-sm">
       <MaterialIcons name="search" size={24} color="#66c0f4" />
       <TextInput
         placeholder="Search games or achievements..."
         placeholderTextColor="#8b9cb3"
         value={searchQuery}
         onChangeText={setSearchQuery}
-        className="flex-1 ml-3 text-white text-base"
+        className="flex-1 ml-3 text-white text-lg"
         returnKeyType="search"
         autoCorrect={false}
         autoCapitalize="none"
@@ -45,7 +45,7 @@ const SearchBar = React.memo(({
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           className="bg-steam-blue/50 rounded-full p-1"
         >
-          <MaterialIcons name="close" size={16} color="#c7d5e0" />
+          <MaterialIcons name="close" size={24} color="#c7d5e0" />
         </TouchableOpacity>
       )}
     </View>
@@ -53,7 +53,7 @@ const SearchBar = React.memo(({
 });
 
 const TrendingGames = React.memo(({ onSelectGame }: { onSelectGame: (game: string) => void }) => {
-  const popularGames = ['Cyberpunk 2077', 'Elden Ring', 'Baldur\'s Gate 3', 'The Witcher 3', 'Red Dead Redemption 2'];
+  const popularGames = ['Red Dead Redemption 2', 'Assasin\'s Creed', 'Fallout: New Vegas', 'Tomb Raider', 'Grand Theft Auto', 'Far Cry'];
   
   return (
     <View className="mb-6">
@@ -85,7 +85,7 @@ const CommunityStats = React.memo(({ guides }: { guides: Guide[] }) => {
   }
 
   return (
-    <View className="bg-steam-light/50 border border-steam-light rounded-2xl p-4 mb-6 flex-row justify-between items-center shadow-lg">
+    <View className="bg-steam-light/50 border border-steam-light rounded-3xl p-4 mb-6 flex-row justify-between items-center shadow-lg">
       <View className="items-center flex-1 border-r border-steam-blue/30">
         <Text className="text-3xl font-bold text-white">{guides.length}</Text>
         <Text className="text-steam-gray text-xs uppercase tracking-wider mt-1">Total Guides</Text>

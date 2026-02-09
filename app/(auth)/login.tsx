@@ -61,7 +61,7 @@ const Login = () => {
           </Text>
           
           <View className="space-y-4">
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-1">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-5 py-1 mb-2">
               <MaterialIcons name="email" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Email"
@@ -70,11 +70,11 @@ const Login = () => {
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
               />
             </View>
             
-            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-xl px-4 py-3 mb-2">
+            <View className="flex-row items-center bg-steam-blue border border-steam-light rounded-3xl px-5 py-1 mb-3">
               <MaterialIcons name="lock" size={20} color="#8b9cb3" />
               <TextInput
                 placeholder="Password"
@@ -82,7 +82,7 @@ const Login = () => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
-                className="flex-1 ml-3 text-white text-base"
+                className="flex-1 ml-3 text-white text-lg"
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={20} color="#8b9cb3" />
@@ -91,7 +91,7 @@ const Login = () => {
           </View>
           
           <Pressable
-            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-xl shadow-lg shadow-steam-accent/20 active:opacity-90`}
+            className={`${loading ? 'bg-steam-accent/50' : 'bg-steam-accent'} w-full py-4 rounded-full shadow-lg shadow-steam-accent/20 active:opacity-90`}
             onPress={handleLogin}
             disabled={loading}
           >
@@ -102,17 +102,7 @@ const Login = () => {
             )}
           </Pressable>
 
-          <TouchableOpacity
-            onPress={() => router.push('../reset-password')}
-            className="self-end mb-8 mt-2"
-            disabled={loading}
-          >
-            <Text className="text-steam-accent text-sm font-medium mt-2">
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
-
-          <View className="flex-row justify-center -mt-6">
+          <View className="flex-row justify-center mt-6">
             <Text className="text-steam-gray">New to SteamQuest? </Text>
             <TouchableOpacity
               onPress={() => {
@@ -123,6 +113,26 @@ const Login = () => {
               <Text className="text-steam-accent font-bold">Create Account</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Divider */}
+          <View className="flex-row items-center justify-center mt-2">
+            <View className="flex-1 h-[1px] bg-steam-gray/30" />
+            <Text className="text-steam-gray/60 mx-4 text-sm">OR</Text>
+            <View className="flex-1 h-[1px] bg-steam-gray/30" />
+          </View>
+
+          <View className="flex-row justify-center mt-2">
+            <Text className="text-steam-gray">Forgot Password? </Text>
+            <TouchableOpacity
+              onPress={() => {
+                router.push('../reset-password');
+              }}
+              disabled={loading}
+            >
+              <Text className="text-steam-accent font-bold">Click Here</Text>
+            </TouchableOpacity>
+          </View>
+
         </View>
       </View>
     </TouchableWithoutFeedback>

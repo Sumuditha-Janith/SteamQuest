@@ -117,7 +117,7 @@ const SettingsScreen = () => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Account Info */}
-          <View className="bg-steam-light rounded-2xl p-5 mb-6 shadow-sm">
+          <View className="bg-steam-light rounded-3xl p-5 mb-6 shadow-sm">
             <View className="flex-row items-center mb-4 border-b border-steam-blue/20 pb-4">
               <View className="w-12 h-12 bg-steam-blue rounded-full items-center justify-center mr-3">
                 <MaterialIcons name="person" size={24} color="#c7d5e0" />
@@ -130,7 +130,7 @@ const SettingsScreen = () => {
               </View>
             </View>
 
-            <Text className="text-steam-gray text-xs uppercase mb-2">
+            <Text className="text-steam-gray text-xs uppercase mb-2 ml-2">
               Display Name
             </Text>
 
@@ -138,7 +138,7 @@ const SettingsScreen = () => {
               <TextInput
                 value={displayName}
                 onChangeText={setDisplayName}
-                className="flex-1 bg-steam-blue/50 text-white p-3 rounded-xl border border-steam-blue"
+                className="flex-1 bg-steam-blue/50 text-white p-3 rounded-3xl border border-steam-blue"
                 placeholder="Enter display name"
                 placeholderTextColor="#8b9cb3"
               />
@@ -146,7 +146,7 @@ const SettingsScreen = () => {
               <TouchableOpacity
                 onPress={handleUpdateDisplayName}
                 disabled={updatingName || displayName === user?.displayName || !displayName.trim()}
-                className="bg-steam-accent px-4 justify-center rounded-xl disabled:opacity-50"
+                className="bg-steam-accent px-3 justify-center rounded-3xl disabled:opacity-50"
               >
                 {updatingName ? (
                   <ActivityIndicator color="white" size="small" />
@@ -158,15 +158,15 @@ const SettingsScreen = () => {
           </View>
 
           {/* Security */}
-          <View className="bg-steam-light rounded-2xl p-5 mb-6">
-            <Text className="text-white font-bold text-lg mb-4">
+          <View className="bg-steam-light rounded-3xl p-5 mb-6">
+            <Text className="text-white font-bold text-lg mb-4 ml-2">
               Security
             </Text>
 
             {!showPasswordFields ? (
               <TouchableOpacity
                 onPress={() => setShowPasswordFields(true)}
-                className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue"
+                className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-3xl border border-steam-blue"
               >
                 <View className="flex-row items-center">
                   <MaterialIcons name="lock" size={20} color="#66c0f4" />
@@ -181,14 +181,14 @@ const SettingsScreen = () => {
                 />
               </TouchableOpacity>
             ) : (
-              <View className="bg-steam-blue/30 p-4 rounded-xl border border-steam-blue">
+              <View className="bg-steam-blue/30 p-4 rounded-3xl border border-steam-blue">
                 <TextInput
                   placeholder="Current Password"
                   value={currentPassword}
                   onChangeText={setCurrentPassword}
                   secureTextEntry
                   placeholderTextColor="#8b9cb3"
-                  className="bg-steam-blue text-white p-3 rounded-xl mb-3"
+                  className="bg-steam-blue text-white p-3 rounded-3xl mb-3"
                 />
 
                 <TextInput
@@ -197,7 +197,7 @@ const SettingsScreen = () => {
                   onChangeText={setNewPassword}
                   secureTextEntry
                   placeholderTextColor="#8b9cb3"
-                  className="bg-steam-blue text-white p-3 rounded-xl mb-3"
+                  className="bg-steam-blue text-white p-3 rounded-3xl mb-3"
                 />
 
                 <TextInput
@@ -206,7 +206,7 @@ const SettingsScreen = () => {
                   onChangeText={setConfirmPassword}
                   secureTextEntry
                   placeholderTextColor="#8b9cb3"
-                  className="bg-steam-blue text-white p-3 rounded-xl mb-4"
+                  className="bg-steam-blue text-white p-3 rounded-3xl mb-4"
                 />
 
                 <View className="flex-row gap-3">
@@ -217,7 +217,7 @@ const SettingsScreen = () => {
                       setNewPassword('');
                       setConfirmPassword('');
                     }}
-                    className="flex-1 bg-steam-blue p-3 rounded-xl items-center"
+                    className="flex-1 bg-steam-blue p-3 rounded-full items-center"
                   >
                     <Text className="text-steam-gray">Cancel</Text>
                   </TouchableOpacity>
@@ -225,7 +225,7 @@ const SettingsScreen = () => {
                   <TouchableOpacity
                     onPress={handleChangePassword}
                     disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
-                    className="flex-1 bg-steam-accent p-3 rounded-xl items-center disabled:opacity-50"
+                    className="flex-1 bg-steam-accent p-3 rounded-full items-center disabled:opacity-50"
                   >
                     {changingPassword ? (
                       <ActivityIndicator color="white" size="small" />
@@ -239,13 +239,13 @@ const SettingsScreen = () => {
           </View>
 
           {/* Additional Stuff Section */}
-          <View className="bg-steam-light rounded-2xl p-5 mb-6">
-            <Text className="text-white font-bold text-lg mb-4">
+          <View className="bg-steam-light rounded-3xl p-5 mb-6">
+            <Text className="text-white font-bold text-lg mb-4 ml-2">
               Miscellaneous
             </Text>
 
             <TouchableOpacity
-              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue mb-3"
+              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-3xl border border-steam-blue mb-3"
               onPress={() => {
                 Alert.alert(
                   'Vault-Tec Transmission',
@@ -276,7 +276,7 @@ const SettingsScreen = () => {
 
             {/* Privacy Policy Button */}
             <TouchableOpacity
-              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-xl border border-steam-blue mb-3"
+              className="flex-row items-center justify-between bg-steam-blue/30 p-4 rounded-3xl border border-steam-blue mb-3"
               onPress={() => router.push('/(dashboard)/tasks/privacy')}
             >
               <View className="flex-row items-center">
@@ -291,7 +291,7 @@ const SettingsScreen = () => {
 
           {/* Logout Button */}
           <TouchableOpacity
-            className="bg-red-500/20 border border-red-500/50 rounded-2xl p-4 items-center mb-8 flex-row justify-center"
+            className="bg-red-500/20 border border-red-500/50 rounded-full p-4 items-center mb-8 flex-row justify-center"
             onPress={handleLogout}
             disabled={loggingOut}
           >

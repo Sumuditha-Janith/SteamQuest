@@ -62,13 +62,13 @@ const GuideDetailScreen = () => {
 
   return (
     <View className="flex-1 bg-steam-blue">
-      {/* Custom Header Bar */}
+      {/* Header Bar */}
       <SafeAreaView edges={['top']} className="absolute top-0 w-full z-10 flex-row justify-between p-4">
-        <TouchableOpacity onPress={() => router.push('/(dashboard)/home')} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
-            <MaterialIcons name="arrow-back" size={24} color="#white" />
+        <TouchableOpacity onPress={() => router.push('/(dashboard)/home')} className="bg-[#1b2838] p-2 rounded-full backdrop-blur-sm">
+            <MaterialIcons name="arrow-back" size={24} color="#66c0f4" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleShare} className="bg-steam-blue/50 p-2 rounded-full backdrop-blur-sm">
-            <MaterialIcons name="share" size={24} color="#white" />
+        <TouchableOpacity onPress={handleShare} className="bg-[#1b2838] p-2 rounded-full backdrop-blur-sm">
+            <MaterialIcons name="share" size={24} color="#66c0f4" />
         </TouchableOpacity>
       </SafeAreaView>
 
@@ -101,9 +101,9 @@ const GuideDetailScreen = () => {
         <View className="px-5 pb-10">
             {/* Meta Data Row */}
             <View className="flex-row items-center justify-between mb-6 border-b border-steam-light/30 pb-4">
-                <View className="flex-row items-center">
+                <View className="flex-row items-center mt-4">
                     <View className="w-10 h-10 bg-steam-light rounded-full items-center justify-center mr-3">
-                        <Text className="text-white font-bold text-lg">{guide.authorName?.charAt(0)}</Text>
+                        <MaterialIcons name="person" size={16} color="#66c0f4" />
                     </View>
                     <View>
                         <Text className="text-white font-semibold">By {guide.authorName}</Text>
@@ -111,7 +111,7 @@ const GuideDetailScreen = () => {
                     </View>
                 </View>
                 {guide.estimatedTime && (
-                    <View className="items-end">
+                    <View className="items-end mt-4">
                         <Text className="text-steam-gray text-xs">Est. Time</Text>
                         <Text className="text-white font-semibold">{guide.estimatedTime}</Text>
                     </View>

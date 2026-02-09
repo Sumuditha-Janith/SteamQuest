@@ -114,7 +114,7 @@ const ProfileScreen = () => {
       </View>
 
       <View className="px-4">
-        <View className="flex-row bg-steam-light/50 rounded-2xl p-4 justify-between border border-steam-light/30 shadow-lg">
+        <View className="flex-row bg-steam-light/50 rounded-3xl p-4 justify-between border border-steam-light/30 shadow-lg">
             <View className="items-center flex-1 border-r border-steam-gray/10">
                 <Text className="text-2xl font-bold text-white">{userGuides.length}</Text>
                 <Text className="text-steam-gray text-xs mt-1">Guides</Text>
@@ -160,7 +160,7 @@ const ProfileScreen = () => {
                 <View className="items-center py-10 px-6">
                     <Text className="text-steam-gray text-center mb-4">You haven't posted any guides yet.</Text>
                     <TouchableOpacity
-                        className="bg-steam-accent px-6 py-3 rounded-xl"
+                        className="bg-steam-accent px-6 py-3 rounded-full"
                         onPress={() => router.push('/(dashboard)/create')}
                     >
                         <Text className="text-white font-bold">Start Writing</Text>

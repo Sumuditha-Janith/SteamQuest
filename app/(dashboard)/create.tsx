@@ -248,17 +248,17 @@ const CreateScreen = () => {
 
           {/* Game Title */}
           <View className="mb-5 relative z-20">
-            <Text className="text-white font-semibold mb-2 ml-1">Game Title <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Game Title <Text className="text-red-400">*</Text></Text>
             <View>
               <TextInput
                 placeholder="e.g., Cyberpunk 2077"
                 placeholderTextColor="#8b9cb3"
                 value={gameTitle}
                 onChangeText={(value) => updateFormField('gameTitle', value)}
-                className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
+                className="bg-steam-light border border-steam-light rounded-3xl text-white p-4 text-base"
               />
               {showSuggestions && suggestions.length > 0 && (
-                <View className="absolute top-full left-0 right-0 mt-1 bg-steam-light border border-steam-accent/30 rounded-xl shadow-lg z-50">
+                <View className="absolute top-full left-0 right-0 mt-1 bg-steam-light border border-steam-accent/30 rounded-3xl shadow-lg z-50">
                   {suggestions.map((suggestion, index) => (
                     <TouchableOpacity
                       key={index}
@@ -275,19 +275,19 @@ const CreateScreen = () => {
 
           {/* Achievement Name */}
           <View className="mb-5">
-            <Text className="text-white font-semibold mb-2 ml-1">Achievement Name <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Achievement Name <Text className="text-red-400">*</Text></Text>
             <TextInput
               placeholder="e.g., The World"
               placeholderTextColor="#8b9cb3"
               value={achievementName}
               onChangeText={(value) => updateFormField('achievementName', value)}
-              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
+              className="bg-steam-light border border-steam-light rounded-3xl text-white p-4 text-base"
             />
           </View>
 
           {/* Difficulty */}
           <View className="mb-5">
-            <Text className="text-white font-semibold mb-2 ml-1">Difficulty</Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Difficulty</Text>
             <View className="flex-row flex-wrap gap-2">
               {difficulties.map((diff) => (
                 <TouchableOpacity
@@ -305,7 +305,7 @@ const CreateScreen = () => {
 
           {/* Platform */}
           <View className="mb-5">
-            <Text className="text-white font-semibold mb-2 ml-1">Platform</Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Platform</Text>
             <View className="flex-row flex-wrap gap-2">
               {['PC', 'PlayStation', 'Xbox', 'Switch'].map((platform) => (
                 <TouchableOpacity
@@ -326,7 +326,7 @@ const CreateScreen = () => {
 
           {/* Estimated Time */}
           <View className="mb-5">
-            <Text className="text-white font-semibold mb-2 ml-1">Estimated Time</Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Estimated Time</Text>
             <View className="flex-row items-center space-x-3">
               <View className="flex-1">
                 <TextInput
@@ -335,7 +335,7 @@ const CreateScreen = () => {
                   value={estimatedTime.value}
                   onChangeText={updateEstimatedTimeValue}
                   keyboardType="numeric"
-                  className="bg-steam-light border border-steam-light rounded-xl text-white p-4 text-base"
+                  className="bg-steam-light border border-steam-light rounded-full text-white p-4 text-base"
                 />
               </View>
               <View className="flex-row">
@@ -352,29 +352,29 @@ const CreateScreen = () => {
                 ))}
               </View>
             </View>
-            <Text className="text-steam-gray text-xs mt-1 ml-1">
+            <Text className="text-steam-gray text-xs mt-2 ml-2">
               Leave empty if not applicable
             </Text>
           </View>
 
           {/* Image Upload */}
           <View className="mb-6">
-            <Text className="text-white font-semibold mb-2 ml-1">Visual Guide (Optional)</Text>
-            <View className="bg-steam-light border border-steam-light rounded-xl overflow-hidden">
+            <Text className="text-white font-semibold mb-2 ml-2">Cover Image (Optional)</Text>
+            <View className="bg-steam-light border border-steam-light rounded-3xl overflow-hidden">
                 {imageUri ? (
                     <View>
                         <Image source={{ uri: imageUri }} className="w-full h-48" resizeMode="cover" />
                         <TouchableOpacity 
                             onPress={() => updateFormField('imageUri', null)}
-                            className="absolute top-2 right-2 bg-black/60 rounded-full p-2"
+                            className="absolute top-2 right-2 bg-black/60 rounded-3xl p-2"
                         >
                             <MaterialIcons name="close" size={20} color="white" />
                         </TouchableOpacity>
                     </View>
                 ) : (
-                    <View className="h-40 justify-center items-center border-2 border-dashed border-steam-blue/50 rounded-xl m-2 bg-steam-blue/20">
+                    <View className="h-40 justify-center items-center border-2 border-dashed border-steam-blue/50 rounded-3xl m-2 bg-steam-blue/20">
                         <MaterialIcons name="add-photo-alternate" size={40} color="#2a475e" />
-                        <Text className="text-steam-gray mt-2">Add a screenshot</Text>
+                        <Text className="text-steam-gray mt-2">Add a cover image</Text>
                     </View>
                 )}
                 
@@ -397,7 +397,7 @@ const CreateScreen = () => {
 
           {/* Content */}
           <View className="mb-8">
-            <Text className="text-white font-semibold mb-2 ml-1">Guide Instructions <Text className="text-red-400">*</Text></Text>
+            <Text className="text-white font-semibold mb-2 ml-2">Guide Instructions <Text className="text-red-400">*</Text></Text>
             <TextInput
               placeholder="Describe step-by-step how to unlock this achievement..."
               placeholderTextColor="#8b9cb3"
@@ -406,7 +406,7 @@ const CreateScreen = () => {
               multiline
               numberOfLines={6}
               textAlignVertical="top"
-              className="bg-steam-light border border-steam-light rounded-xl text-white p-4 min-h-[160px] text-base leading-6"
+              className="bg-steam-light border border-steam-light rounded-3xl text-white p-4 min-h-[160px] text-base leading-6"
             />
           </View>
 
@@ -414,7 +414,7 @@ const CreateScreen = () => {
           <View className="flex-row gap-3 mb-10">
             <TouchableOpacity
               onPress={() => Alert.alert('Clear', 'Clear all fields?', [{text: 'Cancel'}, {text: 'Clear', onPress: resetForm, style: 'destructive'}])}
-              className="flex-1 bg-steam-light py-4 rounded-xl items-center justify-center border border-steam-light active:opacity-80"
+              className="flex-1 bg-steam-light py-4 rounded-full items-center justify-center border border-steam-light active:opacity-80"
             >
               <Text className="text-steam-gray font-bold">Clear</Text>
             </TouchableOpacity>
@@ -422,7 +422,7 @@ const CreateScreen = () => {
             <TouchableOpacity
               onPress={handleSubmit}
               disabled={loading}
-              className="flex-[2] bg-steam-accent py-4 rounded-xl items-center justify-center shadow-lg shadow-steam-accent/20 active:opacity-90"
+              className="flex-[2] bg-steam-accent py-4 rounded-full items-center justify-center shadow-lg shadow-steam-accent/20 active:opacity-90"
             >
               {loading ? (
                 <ActivityIndicator color="white" />
