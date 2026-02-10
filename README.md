@@ -31,6 +31,11 @@
 * Haptic feedback and smooth navigation transitions.
 * Custom double-press back exit for Android users.
 
+**Demo Video**: [Watch Here](https://youtu.be/5wQ7ycy19fo)
+
+
+**Demo Video**: [Click to Download](https://drive.google.com/file/d/1yRuj6KTXfzEBDboK9vj3v6nlkKOT3vO3/view?usp=drivesdk)
+
 ## 🛠️ Tech Stack
 
 * **Framework**: [Expo](https://expo.dev/) (React Native).
