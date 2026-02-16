@@ -34,7 +34,7 @@
 **Demo Video**: [Watch Here](https://youtu.be/5wQ7ycy19fo)
 
 
-**Demo Video**: [Click to Download](https://drive.google.com/file/d/1yRuj6KTXfzEBDboK9vj3v6nlkKOT3vO3/view?usp=drivesdk)
+**Download APK**: [Click to Download](https://drive.google.com/file/d/1yRuj6KTXfzEBDboK9vj3v6nlkKOT3vO3/view?usp=drivesdk)
 
 ## 🛠️ Tech Stack
 
